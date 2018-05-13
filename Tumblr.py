@@ -24,6 +24,10 @@ class Tumblr:
         if oauth_key == '' or oauth_sec == '':
             raise TypeError
 
+    def keys(self):
+        print(f'Consumer key = {self.oauth_key}')
+        print(f'Secret key = {self.oauth_sec}')
+
     def get(self, user, section, offset=0, limit=20):
         if type(user) != str or type(section) != str:
             raise TypeError
