@@ -3,14 +3,26 @@ import json
 import os, sys
 
 class Tumblr:
-    def __init__(self, user, oauth_key, oauth_sec):
+    def __init__(self, oauth_key='', oauth_sec=''):
         if type(oauth_key) != str or type(oauth_sec) != str:
             raise TypeError
+
+        self.oauth_key = oauth_key
+        self.oauth_sec = oauth_sec
+
+        if os.path.isfile('backup.conf') and (oauth_key == '' or oauth_sec == ''):
+            with open('backup.conf') as conf:
+                conf = [c.strip().replace(' ', '') for c in conf.readlines()]
+
+            # Check each read line and split them around the = sign if they starts with one of the settings
+            for c in conf:
+                if c.startswith('oauth_key='):
+                    oauth_key = c.split('=')[1]
+                elif c.startswith('oauth_sec='):
+                    oauth_sec = c.split('=')[1]
+
         if oauth_key == '' or oauth_sec == '':
             raise TypeError
-
-        self._oauth_key = oauth_key
-        self._oauth_sec = oauth_sec
 
     def get(self, user, section, offset=0, limit=20):
         if type(user) != str or type(section) != str:
@@ -23,46 +35,53 @@ class Tumblr:
         url += f"&limit={limit}&offset={offset}"
 
         get = requests.get(url)
-        get = json.loads(response.text)
+        get = json.loads(get.text)
         get = {
             'user': user,
             'section': section,
             'status': {
-                'code': response['meta']['status'],
-                'msg': response['meta']['msg'],
+                'code': get['meta']['status'],
+                'msg': get['meta']['msg'],
                 },
-            'errors': response.get('errors', None),
-            'response': response.get('response', None),
+            'errors': get.get('errors', {None: None}),
+            'response': get.get('response', {None: None}),
             }
 
         return get
 
-# Variable declaration
-oauth_key = str()
-oauth_sec = str()
+    def get_tot(self, user, section):
+        if section == 'posts':
+            total = self.get(user, section, 0, 0)['response'].get('total_posts', 0)
+        elif section == 'likes':
+            total = self.get(user, section, 0, 0)['response'].get('liked_count', 0)
+        else:
+            total = 0
 
-# If file exists read all lines, strip and remove spaces
-if os.path.isfile('backup.conf'):
-    with open('backup.conf') as conf:
-        conf = [c.strip().replace(' ', '') for c in conf.readlines()]
+        return total
 
-    # Check each read line and split them around the = sign if they starts with one of the settings
-    for c in conf:
-        if c.startswith('oauth_key='):
-            oauth_key = c.split('=')[1]
-        elif c.startswith('oauth_sec='):
-            oauth_sec = c.split('=')[1]
+    def get_all(self, user, section, limit=0):
+        if type(user) != str or type(section) != str:
+            raise TypeError
+        if type(limit) != int:
+            raise TypeError
 
-# Print which variables remained empty and exit if any is
-if not oauth_key:
-    print('ERROR: oauth key not defined')
-if not oauth_sec:
-    print('ERROR: oauth secret key not defined')
-if not oauth_key or not oauth_sec:
-    sys.exit(1)
-else:
-    print('oauth_key =', oauth_key)
-    print('oauth_sec =', oauth_sec)
+        total = limit
+        if limit <= 0:
+            total = self.get_tot(user, section)
+        downloads = 0
+        items = dict()
+        while downloads < total:
+            for o in range(0, total, 20):
+                get = self.get(user, section, o)
+                if section == 'posts':
+                    get = get['response'].get('posts', {0: None})
+                elif section == 'likes':
+                    get = get['response'].get('liked_posts', {0: None})
+                get = {k: gk for k,gk in enumerate(get,o)}
+                downloads += len(get)
+                items.update(get)
 
-# Declare tumblr object
-tumblr = Tumblr(user, oauth_key, oauth_sec)
+            if limit <= 0:
+                total = self.get_tot(user, section)
+
+        return {'section': section, 'posts': items}
