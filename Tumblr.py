@@ -115,6 +115,8 @@ class Tumblr:
                 get = get['response'].get('liked_posts', {0: None})
 
             get = {k: gk for k,gk in enumerate(get,len(items))}
+            if len(get) == 0:
+                break
             items.update(get)
 
         return {'user': user, 'section': section, 'posts': items}
