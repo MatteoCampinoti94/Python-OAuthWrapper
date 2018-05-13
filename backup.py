@@ -19,7 +19,7 @@ class Tumblr:
         if type(limit) != int or type(offset) != int:
             raise TypeError
 
-        url  = f"http://api.tumblr.com/v2/blog/{user}.tumblr.com/{section}"
+        url  = f"http://api.tumblr.com/v2/blog/{user}.tumblr.com/{section}/"
         url += f"?api_key={oauth_key}"
         url += f"&limit={limit}&offset={offset}"
 
