@@ -3,7 +3,7 @@ import json
 import os
 
 class Tumblr:
-    def __init__(self, oauth_key='', oauth_sec='', file='tumblr.conf'):
+    def __init__(self, oauth_key='', oauth_sec='', file='tumblr.conf', quiet=True):
         if type(oauth_key) != str or type(oauth_sec) != str or type(file) != str:
             raise TypeError
 
@@ -23,6 +23,9 @@ class Tumblr:
 
         if oauth_key == '' or oauth_sec == '':
             raise TypeError
+
+        if not quiet:
+            self.keys()
 
     def keys(self):
         print(f'Consumer key = {self.oauth_key}')
