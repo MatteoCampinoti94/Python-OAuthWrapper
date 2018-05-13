@@ -7,7 +7,7 @@ class Tumblr:
         if type(oauth_key) != str or type(oauth_sec) != str:
             raise TypeError
 
-        if os.path.isfile('backup.conf') and (oauth_key == '' or oauth_sec == ''):
+        if os.path.isfile('tumblr.conf') and (oauth_key == '' or oauth_sec == ''):
             with open('backup.conf') as conf:
                 conf = [c.strip().replace(' ', '') for c in conf.readlines()]
 
