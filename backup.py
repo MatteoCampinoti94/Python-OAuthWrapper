@@ -13,11 +13,11 @@ if os.path.isfile('backup.conf'):
     for c in conf:
         c = c.replace(' ', '')
         if c.startswith('user='):
-            user = c[5:]
+            user = "".join(c.split('=')[1:])
         if c.startswith('oauth_key='):
-            oauth_key = c[10:]
+            oauth_key = "".join(c.split('=')[1:])
         if c.startswith('oauth_sec='):
-            oauth_sec = c[10:]
+            oauth_sec = "".join(c.split('=')[1:])
 
 if not user:
     print('ERROR: user not defined')
