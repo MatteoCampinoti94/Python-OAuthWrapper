@@ -1,2 +1,2 @@
 # TumblrBackup
-Python script to backup your Tumblr likes
+Python script to easily handle Tumblr get requests.
