@@ -2,6 +2,37 @@ import requests
 import json
 import os, sys
 
+class Tumblr:
+    def __init__(self, user, oauth_key, oauth_sec):
+        if any(type(arg) != str for arg in (user, oauth_key, oauth_sec)):
+            raise TypeError
+        if any(arg == '' for arg in (user, oauth_key, oauth_sec)):
+            raise TypeError
+
+        self._user = user
+        self._oauth_key = oauth_key
+        self._oauth_sec = oauth_sec
+
+    def get(self, section, offset=0, limit=20):
+        if type(section) != str:
+            raise TypeError
+        if type(limit) != int or type(offset) != int:
+            raise TypeError
+
+        url  = f"http://api.tumblr.com/v2/blog/{user}.tumblr.com/{section}"
+        url += f"?api_key={oauth_key}"
+        url += f"&limit={limit}&offset={offset}"
+
+        response = requests.get(url)
+        response = json.loads(response.text)
+        response = {
+            'status': (response['meta']['status'], response['meta']['msg']),
+            'errors': response.get('errors', None),
+            'data': response.get('response', None),
+            }
+
+        return response
+
 # Variable declaration
 user = str()
 oauth_key = str()
@@ -35,9 +66,11 @@ else:
     print('oauth_key =', oauth_key)
     print('oauth_sec =', oauth_sec)
 
-# Get likes using api url and print response and message
-likes = f"http://api.tumblr.com/v2/blog/{user}.tumblr.com/likes?api_key={oauth_key}"
-likes = requests.get(likes)
-likes = json.loads(likes.text)
+# Declare tumblr object
+tumblr = Tumblr(user, oauth_key, oauth_sec)
 
-print(likes['meta']['status'], likes['meta']['msg'])
+# Get likes using class and print response and message
+likes = tumblr.get('likes', 0, 1)
+print(likes['status'])
+print(likes['errors'])
+print(likes['data'])
