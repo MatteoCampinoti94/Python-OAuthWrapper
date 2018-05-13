@@ -80,6 +80,9 @@ class Tumblr:
         while downloads < total:
             for o in range(0, total, 20):
                 get = self.get(user, section, o)
+                if get['status']['code'] == 429:
+                    print('Rate limit exceded')
+                    break
                 if section == 'posts':
                     get = get['response'].get('posts', {0: None})
                 elif section == 'likes':
