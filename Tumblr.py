@@ -32,15 +32,21 @@ class Tumblr:
         print(f'Consumer key = {self.oauth_key}')
         print(f'Secret key = {self.oauth_sec}')
 
-    def get(self, user, section, offset=0, limit=20):
+    def get(self, user, section, limit=20, offset=0, before=0, after=0):
         if type(user) != str or type(section) != str:
             raise TypeError
-        if type(limit) != int or type(offset) != int:
+        if any(type(arg) != int for arg in (limit, offset, before, after)):
             raise TypeError
 
         url  = f"http://api.tumblr.com/v2/blog/{user}.tumblr.com/{section}/"
         url += f"?api_key={self.oauth_key}"
-        url += f"&limit={limit}&offset={offset}"
+        url += f"&limit={limit}"
+        if offset > 0:
+            url += f"&offset={offset}"
+        elif before > 0:
+            url += f"&before={before}"
+        elif after > 0:
+            url += f"&after={after}"
 
         get = requests.get(url)
         get = json.loads(get.text)
@@ -78,7 +84,12 @@ class Tumblr:
             total = self.get_tot(user, section)
         items = dict()
         while len(items) < total:
-            get = self.get(user, section, len(items))
+            if len(items):
+                time_last = tuple(items.keys())[-1]
+                time_last = items[time_last]['liked_timestamp']
+            else:
+                time_last = int(time.time() + 86400)
+            get = self.get(user, section, before=time_last)
 
             if get['status']['code'] == 429:
                 if not quiet:
