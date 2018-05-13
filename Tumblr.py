@@ -1,4 +1,5 @@
 import requests
+import time
 import json
 import os
 
@@ -66,7 +67,7 @@ class Tumblr:
 
         return total
 
-    def get_all(self, user, section, limit=0):
+    def get_all(self, user, section, limit=0, quiet=True):
         if type(user) != str or type(section) != str:
             raise TypeError
         if type(limit) != int:
@@ -75,23 +76,24 @@ class Tumblr:
         total = limit
         if limit <= 0:
             total = self.get_tot(user, section)
-        downloads = 0
         items = dict()
-        while downloads < total:
-            for o in range(0, total, 20):
-                get = self.get(user, section, o)
-                if get['status']['code'] == 429:
+        while len(items) < total:
+            get = self.get(user, section, len(items))
+            if get['status']['code'] == 429:
+                if not quiet:
                     print('Rate limit exceded')
-                    break
-                if section == 'posts':
-                    get = get['response'].get('posts', {0: None})
-                elif section == 'likes':
-                    get = get['response'].get('liked_posts', {0: None})
-                get = {k: gk for k,gk in enumerate(get,o)}
-                downloads += len(get)
-                items.update(get)
-
-            if limit <= 0:
-                total = self.get_tot(user, section)
+                time.sleep(10)
+                continue
+            elif get['status']['code'] != 200:
+                if not quiet:
+                    print('code:',get['status']['code'])
+                    print('mesg:',get['status']['msg'])
+                continue
+            if section == 'posts':
+                get = get['response'].get('posts', {0: None})
+            elif section == 'likes':
+                get = get['response'].get('liked_posts', {0: None})
+            get = {k: gk for k,gk in enumerate(get,len(items))}
+            items.update(get)
 
         return {'user': user, 'section': section, 'posts': items}
