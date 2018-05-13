@@ -94,4 +94,4 @@ class Tumblr:
             if limit <= 0:
                 total = self.get_tot(user, section)
 
-        return {'section': section, 'posts': items}
+        return {'user': user, 'section': section, 'posts': items}
