@@ -79,6 +79,7 @@ class Tumblr:
         items = dict()
         while len(items) < total:
             get = self.get(user, section, len(items))
+
             if get['status']['code'] == 429:
                 if not quiet:
                     print('Rate limit exceded')
@@ -89,10 +90,12 @@ class Tumblr:
                     print('code:',get['status']['code'])
                     print('mesg:',get['status']['msg'])
                 continue
+
             if section == 'posts':
                 get = get['response'].get('posts', {0: None})
             elif section == 'likes':
                 get = get['response'].get('liked_posts', {0: None})
+
             get = {k: gk for k,gk in enumerate(get,len(items))}
             items.update(get)
 
