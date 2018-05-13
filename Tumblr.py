@@ -78,6 +78,9 @@ class Tumblr:
             raise TypeError
         if type(limit) != int:
             raise TypeError
+        if section not in ('likes', 'posts'):
+            print(f'Section "{section}" is not supported')
+            return {'user': user, 'section': section, 'posts': {None: None}}
 
         total = limit
         if limit <= 0:
@@ -86,9 +89,13 @@ class Tumblr:
         while len(items) < total:
             if len(items):
                 time_last = tuple(items.keys())[-1]
-                time_last = items[time_last]['liked_timestamp']
+                if section == 'posts':
+                    time_last = items[time_last]['timestamp']
+                elif section == 'likes':
+                    time_last = items[time_last]['liked_timestamp']
             else:
                 time_last = int(time.time() + 86400)
+
             get = self.get(user, section, before=time_last)
 
             if get['status']['code'] == 429:
