@@ -26,7 +26,11 @@ class Tumblr:
         response = requests.get(url)
         response = json.loads(response.text)
         response = {
-            'status': (response['meta']['status'], response['meta']['msg']),
+            'section': section,
+            'status': {
+                'code': response['meta']['status'],
+                'msg': response['meta']['msg'],
+                },
             'errors': response.get('errors', None),
             'data': response.get('response', None),
             }
