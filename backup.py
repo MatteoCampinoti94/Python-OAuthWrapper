@@ -15,9 +15,9 @@ if os.path.isfile('backup.conf'):
         if c.startswith('user='):
             user = c[5:]
         if c.startswith('oauth_key='):
-            oauth_key = c[11:]
+            oauth_key = c[10:]
         if c.startswith('oauth_sec='):
-            oauth_sec = c[11:]
+            oauth_sec = c[10:]
 
 if not user:
     print('ERROR: user not defined')
@@ -31,3 +31,9 @@ else:
     print('user =', user)
     print('oauth_key =', oauth_key)
     print('oauth_sec =', oauth_sec)
+
+likes = f"http://api.tumblr.com/v2/blog/{user}.tumblr.com/likes?api_key={oauth_key}"
+likes = requests.get(likes)
+likes = json.loads(likes.text)
+
+print(likes['meta']['status'], likes['meta']['msg'])
