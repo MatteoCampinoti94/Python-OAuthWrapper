@@ -3,12 +3,12 @@ import json
 import os
 
 class Tumblr:
-    def __init__(self, oauth_key='', oauth_sec=''):
-        if type(oauth_key) != str or type(oauth_sec) != str:
+    def __init__(self, oauth_key='', oauth_sec='', file='tumblr.conf'):
+        if type(oauth_key) != str or type(oauth_sec) != str or type(file) != str:
             raise TypeError
 
-        if os.path.isfile('tumblr.conf') and (oauth_key == '' or oauth_sec == ''):
-            with open('backup.conf') as conf:
+        if os.path.isfile(file) and (oauth_key == '' or oauth_sec == ''):
+            with open(file) as conf:
                 conf = [c.strip().replace(' ', '') for c in conf.readlines()]
 
             # Check each read line and split them around the = sign if they starts with one of the settings
