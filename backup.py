@@ -1,6 +1,6 @@
 import requests
 import json
-import os, sys
+import os
 
 class Tumblr:
     def __init__(self, oauth_key='', oauth_sec=''):
