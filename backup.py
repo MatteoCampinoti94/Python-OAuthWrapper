@@ -13,7 +13,7 @@ class Tumblr:
         self._oauth_sec = oauth_sec
 
     def get(self, user, section, offset=0, limit=20):
-        if type(section) != str:
+        if type(user) != str or type(section) != str:
             raise TypeError
         if type(limit) != int or type(offset) != int:
             raise TypeError
