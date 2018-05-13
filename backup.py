@@ -1,6 +1,6 @@
 import requests
 import json
-import os
+import os, sys
 
 user = str()
 oauth_key = str()
@@ -26,4 +26,8 @@ if not oauth_key:
 if not oauth_sec:
     print('ERROR: oauth secret key not defined')
 if not user or not oauth_key or not oauth_sec:
-    return 1
+    sys.exit(1)
+else:
+    print('user =', user)
+    print('oauth_key =', oauth_key)
+    print('oauth_sec =', oauth_sec)
