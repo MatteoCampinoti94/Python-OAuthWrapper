@@ -22,9 +22,9 @@ class Tumblr:
         url += f"?api_key={self.oauth_key}"
         url += f"&limit={limit}&offset={offset}"
 
-        response = requests.get(url)
-        response = json.loads(response.text)
-        response = {
+        get = requests.get(url)
+        get = json.loads(response.text)
+        get = {
             'user': user,
             'section': section,
             'status': {
@@ -32,10 +32,10 @@ class Tumblr:
                 'msg': response['meta']['msg'],
                 },
             'errors': response.get('errors', None),
-            'data': response.get('response', None),
+            'response': response.get('response', None),
             }
 
-        return response
+        return get
 
 # Variable declaration
 oauth_key = str()
