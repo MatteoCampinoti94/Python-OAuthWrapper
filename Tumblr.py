@@ -78,6 +78,8 @@ class Tumblr:
             raise TypeError
         if type(limit) != int:
             raise TypeError
+        if type(quiet) != bool:
+            raise TypeError
         if section not in ('likes', 'posts'):
             print(f'Section "{section}" is not supported')
             return {'user': user, 'section': section, 'posts': {None: None}}
