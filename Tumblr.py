@@ -88,6 +88,7 @@ class Tumblr:
         if limit <= 0:
             total = self.get_tot(user, section)
         items = dict()
+        items_id = tuple()
         while len(items) < total:
             if len(items):
                 time_last = tuple(items.keys())[-1]
@@ -116,9 +117,12 @@ class Tumblr:
             elif section == 'likes':
                 get = get['response'].get('liked_posts', {0: None})
 
-            get = {k: gk for k,gk in enumerate(get,len(items))}
+
             if len(get) == 0:
                 break
+            get = tuple(g for g in get if g['id'] not in items_id)
+            get = {k: gk for k,gk in enumerate(get,len(items))}
             items.update(get)
+            items_id += tuple(get[k]['id'] for k in get)
 
         return {'user': user, 'section': section, 'posts': items}
