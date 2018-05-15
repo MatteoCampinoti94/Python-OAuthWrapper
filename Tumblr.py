@@ -53,8 +53,8 @@ class Tumblr:
         get = {
             'user': user,
             'section': section,
-            'status': {
-                'code': get['meta']['status'],
+            'meta': {
+                'status': get['meta']['status'],
                 'msg': get['meta']['msg'],
                 },
             'errors': get.get('errors', {None: None}),
