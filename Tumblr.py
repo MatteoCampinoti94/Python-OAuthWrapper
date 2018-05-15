@@ -4,9 +4,15 @@ import json
 import os
 
 class Tumblr:
-    def __init__(self, api_key='', api_sec='', file='tumblr.conf', quiet=True):
-        if type(api_key) != str or type(api_sec) != str or type(file) != str:
-            raise TypeError
+    def __init__(self, api_key='', api_sec='', oauth_token='', oauth_sec='', file='tumblr.conf', quiet=True):
+        if type(api_key) != str or type(api_sec) != str:
+            raise TypeError('Api keys need to be passed as strings')
+        if type(oauth_token) != str or type(oauth_sec) != str:
+            raise TypeError('OAuth tokens need to be passed as strings')
+        if type(file) != str:
+            raise TypeError('Conf file needs to be passed string')
+        if type(quiet) != bool:
+            raise TypeError('quiet argument needs to be of type bool')
 
         if os.path.isfile(file) and (api_key == '' or api_sec == ''):
             with open(file) as conf:
@@ -21,10 +27,13 @@ class Tumblr:
 
         self.api_key = api_key
         self.api_sec = api_sec
-        self.keys = (api_key, api_sec)
+        self.keys = (self.api_key, self.api_sec)
+        self.oauth_token = oauth_token
+        self.oauth_sec = oauth_sec
+        self.tokens = (self.oauth_token, self.oauth_sec)
 
-        if api_key == '' or api_sec == '':
-            raise TypeError
+        if api_key == '':
+            raise TypeError('Consumer key cannot be empty')
 
         if not quiet:
             self.keys()
@@ -34,9 +43,11 @@ class Tumblr:
 
     def get(self, user, section, limit=20, offset=0, before=0, after=0):
         if type(user) != str or type(section) != str:
-            raise TypeError
+            raise TypeError('User and section must be passed as strings')
         if any(type(arg) != int for arg in (limit, offset, before, after)):
-            raise TypeError
+            raise TypeError('limit, offset, before and after arguments need to be int')
+        if bool(offset) + bool(before) + bool(after) > 1:
+            raise TypeError('Can only pass either offset, before or after')
 
         url  = f"http://api.tumblr.com/v2/blog/{user}.tumblr.com/{section}"
         url += f"?api_key={self.api_key}"
@@ -53,10 +64,7 @@ class Tumblr:
         get = {
             'user': user,
             'section': section,
-            'meta': {
-                'status': get['meta']['status'],
-                'msg': get['meta']['msg'],
-                },
+            'meta': get['meta'],
             'errors': get.get('errors', [{None: None}]),
             'response': get.get('response', [{None: None}]),
             }
