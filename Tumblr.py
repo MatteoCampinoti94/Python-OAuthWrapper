@@ -16,39 +16,64 @@ class Tumblr:
         if type(quiet) != bool:
             raise TypeError('quiet argument needs to be of type bool')
 
-        if os.path.isfile(file) and oauth_key == '':
-            with open(file, 'r') as conf:
-                try:
-                    conf = json.load(conf)
-                    oauth_key = conf.get('oauth_key', '')
-                    oauth_key_sec = conf.get('oauth_key_sec', '')
-                    oauth_token = conf.get('oauth_token', '')
-                    oauth_token_sec = conf.get('oauth_token_sec', '')
-                except:
-                    raise TypeError(f'"{file}" contains errors')
-
-
-        self.oauth_key = oauth_key
-        self.oauth_key_sec = oauth_key_sec
-        self.oauth_keys = (self.oauth_key, self.oauth_key_sec)
-        self.oauth_token = oauth_token
-        self.oauth_token_sec   = oauth_token_sec
-        self.oauth_tokens = (self.oauth_token, self.oauth_token_sec)
-
-        if self.oauth_token and self.oauth_token_sec:
-            self.oauth = OAuth1(self.oauth_key, self.oauth_key_sec, self.oauth_token, self.oauth_token_sec)
+        if (oauth_key, oauth_key_sec, oauth_token, oauth_token_sec) == ('','','',''):
+            self.conf_read(file, quiet)
         else:
-            self.oauth = None
+            self.oauth_key = oauth_key
+            self.oauth_key_sec = oauth_key_sec
+            self.oauth_keys = (self.oauth_key, self.oauth_key_sec)
+            self.oauth_token = oauth_token
+            self.oauth_token_sec = oauth_token_sec
+            self.oauth_tokens = (self.oauth_token, self.oauth_token_sec)
 
-        if bool(self.oauth_token) + bool(self.oauth_token) == 1:
-            raise TypeError('Only one token was provided, needs both')
+            self.check_oauth()
 
-        if oauth_key == '':
+            if not quiet:
+                self.keys()
+                self.tokens()
+
+    def check_oauth(self):
+        if self.oauth_token and self.oauth_token_sec and (not self.oauth_key or not self.oauth_key_sec):
+            raise TypeError('Needs both oauth consumer keys if tokens are provided')
+        elif bool(self.oauth_token) + bool(self.oauth_token) == 1:
+            raise TypeError('Needs both oauth tokens')
+
+        if self.oauth_key == '':
             raise TypeError('Consumer key cannot be empty')
 
-        if not quiet:
-            self.keys()
-            self.tokens()
+        self.oauth = OAuth1(self.oauth_key, self.oauth_key_sec, self.oauth_token, self.oauth_token_sec)
+
+    def conf_read(self, file='tumblr.conf.json', quiet=True):
+        with open(file, 'r') as conf:
+            conf = json.load(conf)
+
+            oauth_key = conf.get('oauth_key', '')
+            oauth_key_sec = conf.get('oauth_key_sec', '')
+            oauth_token = conf.get('oauth_token', '')
+            oauth_token_sec = conf.get('oauth_token_sec', '')
+
+            self.oauth_key = oauth_key
+            self.oauth_key_sec = oauth_key_sec
+            self.oauth_keys = (self.oauth_key, self.oauth_key_sec)
+            self.oauth_token = oauth_token
+            self.oauth_token_sec = oauth_token_sec
+            self.oauth_tokens = (self.oauth_token, self.oauth_token_sec)
+
+            self.check_oauth()
+
+            if not quiet:
+                self.keys()
+                self.tokens()
+
+    def conf_save(self, file='tumblr.conf.json'):
+        oauth = {
+            "oauth_key": self.oauth_key,
+            "oauth_key_sec": self.oauth_key_sec,
+            "oauth_token": self.oauth_token,
+            "oauth_token_sec": self.oauth_token_sec
+            }
+        with open(file, 'w') as conf:
+            conf.write(json.dumps(oauth, indent=2)+'\n')
 
     def keys(self):
         print(f'Consumer key = {self.oauth_key}\nConsumer secret key = {self.oauth_key_sec}')
@@ -73,10 +98,7 @@ class Tumblr:
         elif after > 0:
             url += f"&after={after}"
 
-        if self.oauth:
-            get = requests.get(url, auth=self.oauth)
-        else:
-            get = requests.get(url+f"?oauth_key={self.oauth_key}")
+        get = requests.get(url, auth=self.oauth)
         get = json.loads(get.text)
         get = {
             'user': user,
