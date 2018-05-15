@@ -3,7 +3,7 @@ import json
 import os
 
 class Tumblr:
-    def __init__(self, api_key='', api_sec='', oauth_token='', oauth_sec='', file='tumblr.conf', quiet=True):
+    def __init__(self, api_key='', api_sec='', oauth_token='', oauth_sec='', file='tumblr.conf.json', quiet=True):
         if type(api_key) != str or type(api_sec) != str:
             raise TypeError('Api keys need to be passed as strings')
         if type(oauth_token) != str or type(oauth_sec) != str:
@@ -13,22 +13,23 @@ class Tumblr:
         if type(quiet) != bool:
             raise TypeError('quiet argument needs to be of type bool')
 
-        if os.path.isfile(file) and (api_key == '' or api_sec == ''):
+        if os.path.isfile(file) and api_key == '':
             with open(file) as conf:
-                conf = [c.strip().replace(' ', '') for c in conf.readlines()]
+                try:
+                    conf = json.load(conf)
+                    api_key = conf.get('api_key', '')
+                    api_sec = conf.get('api_sec', '')
+                    oauth_token = conf.get('oauth_token', '')
+                    oauth_sec = conf.get('oauth_sec', '')
+                except:
+                    raise TypeError(f'"{file}" contains errors')
 
-            # Check each read line and split them around the = sign if they starts with one of the settings
-            for c in conf:
-                if c.startswith('api_key='):
-                    api_key = c.split('=')[1]
-                elif c.startswith('api_sec='):
-                    api_sec = c.split('=')[1]
 
         self.api_key = api_key
         self.api_sec = api_sec
         self.keys = (self.api_key, self.api_sec)
         self.oauth_token = oauth_token
-        self.oauth_sec = oauth_sec
+        self.oauth_sec   = oauth_sec
         self.tokens = (self.oauth_token, self.oauth_sec)
 
         if api_key == '':
