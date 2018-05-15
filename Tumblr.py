@@ -57,8 +57,8 @@ class Tumblr:
                 'status': get['meta']['status'],
                 'msg': get['meta']['msg'],
                 },
-            'errors': get.get('errors', {None: None}),
-            'response': get.get('response', {None: None}),
+            'errors': get.get('errors', [{None: None}]),
+            'response': get.get('response', [{None: None}]),
             }
 
         return get
