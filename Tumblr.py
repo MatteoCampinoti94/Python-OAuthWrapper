@@ -38,7 +38,7 @@ class Tumblr:
         if any(type(arg) != int for arg in (limit, offset, before, after)):
             raise TypeError
 
-        url  = f"http://api.tumblr.com/v2/blog/{user}.tumblr.com/{section}/"
+        url  = f"http://api.tumblr.com/v2/blog/{user}.tumblr.com/{section}"
         url += f"?api_key={self.oauth_key}"
         url += f"&limit={limit}"
         if offset > 0:
@@ -64,9 +64,9 @@ class Tumblr:
         return get
 
     def get_tot(self, user, section):
-        if section == 'posts':
+        if section.startswith('posts'):
             total = self.get(user, section, 0, 0)['response'].get('total_posts', 0)
-        elif section == 'likes':
+        elif section.startswith('likes'):
             total = self.get(user, section, 0, 0)['response'].get('liked_count', 0)
         else:
             total = 0
