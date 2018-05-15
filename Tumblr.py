@@ -4,33 +4,33 @@ import json
 import os
 
 class Tumblr:
-    def __init__(self, oauth_key='', oauth_sec='', file='tumblr.conf', quiet=True):
-        if type(oauth_key) != str or type(oauth_sec) != str or type(file) != str:
+    def __init__(self, api_key='', api_sec='', file='tumblr.conf', quiet=True):
+        if type(api_key) != str or type(api_sec) != str or type(file) != str:
             raise TypeError
 
-        if os.path.isfile(file) and (oauth_key == '' or oauth_sec == ''):
+        if os.path.isfile(file) and (api_key == '' or api_sec == ''):
             with open(file) as conf:
                 conf = [c.strip().replace(' ', '') for c in conf.readlines()]
 
             # Check each read line and split them around the = sign if they starts with one of the settings
             for c in conf:
-                if c.startswith('oauth_key='):
-                    oauth_key = c.split('=')[1]
-                elif c.startswith('oauth_sec='):
-                    oauth_sec = c.split('=')[1]
+                if c.startswith('api_key='):
+                    api_key = c.split('=')[1]
+                elif c.startswith('api_sec='):
+                    api_sec = c.split('=')[1]
 
-        self.oauth_key = oauth_key
-        self.oauth_sec = oauth_sec
-        self.keys = (oauth_key, oauth_sec)
+        self.api_key = api_key
+        self.api_sec = api_sec
+        self.keys = (api_key, api_sec)
 
-        if oauth_key == '' or oauth_sec == '':
+        if api_key == '' or api_sec == '':
             raise TypeError
 
         if not quiet:
             self.keys()
 
     def keys(self):
-        print(f'Consumer key = {self.oauth_key}\nSecret key = {self.oauth_sec}')
+        print(f'Consumer key = {self.api_key}\nSecret key = {self.api_sec}')
 
     def get(self, user, section, limit=20, offset=0, before=0, after=0):
         if type(user) != str or type(section) != str:
@@ -39,7 +39,7 @@ class Tumblr:
             raise TypeError
 
         url  = f"http://api.tumblr.com/v2/blog/{user}.tumblr.com/{section}"
-        url += f"?api_key={self.oauth_key}"
+        url += f"?api_key={self.api_key}"
         url += f"&limit={limit}"
         if offset > 0:
             url += f"&offset={offset}"
