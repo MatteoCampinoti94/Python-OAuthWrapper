@@ -1,7 +1,5 @@
 import requests
-import oauth2
-from requests_oauthlib import OAuth1
-from urllib import parse
+from requests_oauthlib import OAuth1, OAuth1Session
 import json
 import os
 
@@ -106,35 +104,32 @@ class Tumblr:
 
         return get
 
-    def get_tokens(self):
+    def get_tokens(self, quiet=True):
         tokenurl_request = 'http://www.tumblr.com/oauth/request_token'
         tokenurl_authorize = 'http://www.tumblr.com/oauth/authorize'
         tokenurl_access = 'http://www.tumblr.com/oauth/access_token'
 
-        oauth_key = self.oauth_key
-        oauth_key_sec = self.oauth_key_sec
+        oauth_session = OAuth1Session(self.oauth_key, self.oauth_key_sec)
+        oauth_response = oauth_session.fetch_request_token(tokenurl_request)
 
-        consumer = oauth2.Consumer(oauth_key, oauth_key_sec)
-        client = oauth2.Client(consumer)
+        oauth_token = oauth_response['oauth_token']
+        oauth_token_sec = oauth_response['oauth_token_secret']
 
-        response, content = client.request(tokenurl_request, "GET")
-        content = content.decode()
-        request_token = dict(parse.parse_qsl(content))
+        print("Please go here and authorize:")
+        tokenurl_authorize = oauth_session.authorization_url(tokenurl_authorize)
+        print(tokenurl_authorize)
+        oauth_verifier = input('Paste the full redirect url here: ')
+        oauth_verifier = oauth_session.parse_authorization_response(oauth_verifier)
+        oauth_verifier = oauth_verifier['oauth_verifier']
 
-        print("Go to the following link in your browser:")
-        print("{tokenurl_authorize}?oauth_token={request_token['oauth_token']}")
-        oauth_verifier = input('Paste the oaut_verifier: ')
+        oauth_session = OAuth1Session(self.oauth_key, self.oauth_key_sec,
+            oauth_token, oauth_token_sec,
+            verifier=oauth_verifier)
 
-        token = oauth2.Token(request_token['oauth_token'], request_token['oauth_token_secret'])
-        token.set_verifier(oauth_verifier)
-        client = oauth2.Client(consumer, token)
+        oauth_tokens = oauth_session.fetch_access_token(tokenurl_access)
 
-        response, content = client.request(tokenurl_access, "GET")
-        content = content.decode()
-        access_token = dict(parse.parse_qsl(content))
-
-        self.oauth_token = access_token.get('oauth_token', '')
-        self.oauth_token_sec = access_token.get('oauth_token_secret', '')
+        self.oauth_token = oauth_tokens.get('oauth_token', '')
+        self.oauth_token_sec = oauth_tokens.get('oauth_token_secret', '')
 
         self.check_oauth()
 
