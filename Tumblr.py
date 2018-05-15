@@ -21,10 +21,8 @@ class Tumblr:
         else:
             self.oauth_key = oauth_key
             self.oauth_key_sec = oauth_key_sec
-            self.oauth_keys = (self.oauth_key, self.oauth_key_sec)
             self.oauth_token = oauth_token
             self.oauth_token_sec = oauth_token_sec
-            self.oauth_tokens = (self.oauth_token, self.oauth_token_sec)
 
             self.check_oauth()
 
@@ -54,10 +52,8 @@ class Tumblr:
 
             self.oauth_key = oauth_key
             self.oauth_key_sec = oauth_key_sec
-            self.oauth_keys = (self.oauth_key, self.oauth_key_sec)
             self.oauth_token = oauth_token
             self.oauth_token_sec = oauth_token_sec
-            self.oauth_tokens = (self.oauth_token, self.oauth_token_sec)
 
             self.check_oauth()
 
@@ -139,12 +135,8 @@ class Tumblr:
 
         self.oauth_token = access_token.get('oauth_token', '')
         self.oauth_token_sec = access_token.get('oauth_token_secret', '')
-        self.oauth_tokens = (self.oauth_token, self.oauth_token_sec)
 
-        if self.oauth_token and self.oauth_token_sec:
-            self.oauth = OAuth1(self.oauth_key, self.oauth_key_sec, self.oauth_token, self.oauth_token_sec)
-        else:
-            self.oauth = None
+        self.check_oauth()
 
         if not quiet:
             self.tokens()
