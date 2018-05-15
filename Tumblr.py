@@ -1,7 +1,6 @@
 import requests
 from requests_oauthlib import OAuth1, OAuth1Session
 import json
-import os
 
 class Tumblr:
     def __init__(self, oauth_key='', oauth_key_sec='', oauth_token='', oauth_token_sec='', file='tumblr.conf.json', quiet=True):
