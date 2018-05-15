@@ -9,7 +9,7 @@ class Tumblr:
         if type(oauth_token) != str or type(oauth_sec) != str:
             raise TypeError('OAuth tokens need to be passed as strings')
         if type(file) != str:
-            raise TypeError('Conf file needs to be passed string')
+            raise TypeError('Conf file needs to be passed as string')
         if type(quiet) != bool:
             raise TypeError('quiet argument needs to be of type bool')
 
@@ -45,7 +45,7 @@ class Tumblr:
         if type(user) != str or type(section) != str:
             raise TypeError('User and section must be passed as strings')
         if any(type(arg) != int for arg in (limit, offset, before, after)):
-            raise TypeError('limit, offset, before and after arguments need to be int')
+            raise TypeError('limit, offset, before and after arguments need to be integers')
         if bool(offset) + bool(before) + bool(after) > 1:
             raise TypeError('Can only pass either offset, before or after')
 
