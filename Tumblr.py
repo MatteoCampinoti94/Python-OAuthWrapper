@@ -107,7 +107,7 @@ class Tumblr:
         print("{tokenurl_authorize}?oauth_token={request_token['oauth_token']}")
         oauth_verifier = input('Paste the oaut_verifier: ')
 
-        token = oauth2.Token(request_token['oauth_token'], request_token['oauth_token_secret'.])
+        token = oauth2.Token(request_token['oauth_token'], request_token['oauth_token_secret'])
         token.set_verifier(oauth_verifier)
         client = oauth2.Client(consumer, token)
 
