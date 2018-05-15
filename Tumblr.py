@@ -40,7 +40,7 @@ class Tumblr:
             self.tokens()
 
     def keys(self):
-        print(f'Consumer key = {self.api_key}\nSecret key = {self.api_sec}')
+        print(f'Consumer key = {self.api_key}\nConsumer secret key = {self.api_sec}')
 
     def tokens(self):
         print(f'OAuth token = {self.oauth_token}\nOAuth secret token = {self.oauth_sec}')
