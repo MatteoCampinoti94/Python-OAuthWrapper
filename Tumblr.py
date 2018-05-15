@@ -148,13 +148,3 @@ class Tumblr:
 
         if not quiet:
             self.tokens()
-
-    def get_tot(self, user, section):
-        if section.startswith('posts'):
-            total = self.get(user, section, 0, 0)['response'].get('total_posts', 0)
-        elif section.startswith('likes'):
-            total = self.get(user, section, 0, 0)['response'].get('liked_count', 0)
-        else:
-            total = 0
-
-        return total
