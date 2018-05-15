@@ -27,19 +27,23 @@ class Tumblr:
 
         self.api_key = api_key
         self.api_sec = api_sec
-        self.keys = (self.api_key, self.api_sec)
+        self.api_keys = (self.api_key, self.api_sec)
         self.oauth_token = oauth_token
         self.oauth_sec   = oauth_sec
-        self.tokens = (self.oauth_token, self.oauth_sec)
+        self.oauth_tokens = (self.oauth_token, self.oauth_sec)
 
         if api_key == '':
             raise TypeError('Consumer key cannot be empty')
 
         if not quiet:
             self.keys()
+            self.tokens()
 
     def keys(self):
         print(f'Consumer key = {self.api_key}\nSecret key = {self.api_sec}')
+
+    def tokens(self):
+        print(f'OAuth token = {self.oauth_token}\nOAuth secret token = {self.oauth_sec}')
 
     def get(self, user, section, limit=20, offset=0, before=0, after=0):
         if type(user) != str or type(section) != str:
