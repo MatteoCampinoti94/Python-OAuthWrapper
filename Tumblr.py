@@ -1,7 +1,7 @@
 import requests
 import oauth2
 from requests_oauthlib import OAuth1
-import urllib.parse as urlparse
+from urllib import parse
 import json
 import os
 
@@ -123,7 +123,7 @@ class Tumblr:
 
         response, content = client.request(tokenurl_request, "GET")
         content = content.decode()
-        request_token = dict(urlparse.parse_qsl(content))
+        request_token = dict(parse.parse_qsl(content))
 
         print("Go to the following link in your browser:")
         print("{tokenurl_authorize}?oauth_token={request_token['oauth_token']}")
@@ -135,7 +135,7 @@ class Tumblr:
 
         response, content = client.request(tokenurl_access, "GET")
         content = content.decode()
-        access_token = dict(urlparse.parse_qsl(content))
+        access_token = dict(parse.parse_qsl(content))
 
         self.oauth_token = access_token.get('oauth_token', '')
         self.oauth_token_sec = access_token.get('oauth_token_secret', '')
