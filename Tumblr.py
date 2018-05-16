@@ -82,6 +82,8 @@ class Tumblr:
         if bool(offset) + bool(before) + bool(after) > 1:
             raise TypeError('Can only pass either offset, before or after')
 
+        self.check_oauth()
+
         url  = f"http://api.tumblr.com/v2/blog/{user}.tumblr.com/{section}"
         url += f"?limit={limit}"
         if offset > 0:
