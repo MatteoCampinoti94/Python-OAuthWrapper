@@ -1,1 +1,1 @@
-from .Tumblr import Tumblr
+from .TumblrClass import Tumblr
