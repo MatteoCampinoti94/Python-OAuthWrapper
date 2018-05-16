@@ -103,7 +103,7 @@ class Tumblr:
 
         return get
 
-    def get_tokens(self, quiet=True):
+    def get_tokens(self, save=False, quiet=True):
         tokenurl_request = 'http://www.tumblr.com/oauth/request_token'
         tokenurl_authorize = 'http://www.tumblr.com/oauth/authorize'
         tokenurl_access = 'http://www.tumblr.com/oauth/access_token'
@@ -132,5 +132,7 @@ class Tumblr:
 
         self.check_oauth()
 
+        if save:
+            self.conf_save()
         if not quiet:
             self.tokens()
