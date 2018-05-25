@@ -111,15 +111,15 @@ class TumblrBase:
     def tokens(self):
         print(f'OAuth token = {self.oauth_token}\nOAuth secret token = {self.oauth_token_sec}')
 
-    def api_request(self, mode, req_url, **params):
+    def api_request(self, mode, req_url, params={}, valid_params=[]):
         if type(mode) != str or type(req_url) != str:
             raise TypeError('URL and mode must be passed as strings')
 
         self.check_oauth()
 
-        req_url = req_url.strip('/')
-        req_params = urlencode(params)
-        req_url += '/?'*bool(req_params)+req_params
+        params = {k: params[k] for k in params if k in valid_params}
+        params = urlencode(params)
+        req_url = req_url.strip('/') + '/?'*bool(params)+params
 
         if mode == 'GET':
             get = requests.get(self.api_url+req_url, auth=self.oauth)
