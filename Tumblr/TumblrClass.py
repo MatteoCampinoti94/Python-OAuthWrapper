@@ -132,19 +132,13 @@ class TumblrBase:
                 }
 
             return get
-        # Testing
-        # elif mode == 'POST':
-        #     post = requests.post(url, auth=self.oauth)
-        #     post = json.loads(post.text)
-        #     post = {
-        #         'user': user,
-        #         'section': section,
-        #         'meta': get['meta'],
-        #         'errors': get.get('errors', [{None: None}]),
-        #         'response': get.get('response', [{None: None}]),
-        #         }
-        #
-        #     return post
+        elif mode == 'GET-BINARY':
+            get = bytes()
+            get_stream = requests.get(self.api_url+req_url, auth=self.oauth, stream=True)
+            for chunk in get_stream.iter_content(chunk_size=1024):
+                get += chunk
+
+            return get
 
 
 class Tumblr(TumblrBase):
@@ -185,3 +179,16 @@ class Tumblr(TumblrBase):
         valid_params = ['id', 'tag', 'limit', 'offset', 'reblog_info', 'notes_info', 'filter']
 
         return self.api_request('GET', req_url, params, valid_params)
+
+    def avatar(self, blog, size=64, write=False, write_file=''):
+        req_url = f'/v2/blog/{blog}/avatar/{size}'
+
+        avatar = self.api_request('GET-BINARY', req_url)
+
+        if write:
+            if not write_file:
+                write_file = f'{blog}_{size}.png'
+            with open(write_file, 'wb') as f:
+                f.write(avatar)
+        else:
+            return avatar
