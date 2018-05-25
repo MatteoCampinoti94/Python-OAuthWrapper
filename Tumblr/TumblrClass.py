@@ -161,13 +161,21 @@ class Tumblr(TumblrBase):
             req_url = f'/v2/blog/{blog}.tumblr.com/likes'
         else:
             req_url = '/v2/user/likes'
+        valid_params = ['limit', 'offset', 'before', 'after']
 
-        return self.api_request('GET', req_url, params, ['limit', 'offset', 'before', 'after'])
+        return self.api_request('GET', req_url, params, valid_params)
 
     def following(self, blog='', **params):
         if blog:
             req_url = f'/v2/blog/{blog}.tumblr.com/following'
         else:
             req_url = '/v2/user/following'
+        valid_params = ['limit', 'offset']
 
-        return self.api_request('GET', req_url, params, ['limit', 'offset'])
+        return self.api_request('GET', req_url, params, valid_params)
+
+    def dashboard(self, **params):
+        req_url = '/v2/user/dashboard'
+        valid_params = ['limit', 'offset', 'type', 'since_id', 'reblog_info', 'notes_info']
+
+        return self.api_request('GET', req_url, params, valid_params)
