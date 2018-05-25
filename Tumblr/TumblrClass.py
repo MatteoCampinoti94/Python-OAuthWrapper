@@ -179,3 +179,9 @@ class Tumblr(TumblrBase):
         valid_params = ['limit', 'offset', 'type', 'since_id', 'reblog_info', 'notes_info']
 
         return self.api_request('GET', req_url, params, valid_params)
+
+    def posts(self, blog, type='', **params):
+        req_url = f'/v2/blog/{blog}.tumblr.com/posts/{type}'
+        valid_params = ['id', 'tag', 'limit', 'offset', 'reblog_info', 'notes_info', 'filter']
+
+        return self.api_request('GET', req_url, params, valid_params)
