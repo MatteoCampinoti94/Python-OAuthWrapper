@@ -145,3 +145,11 @@ class TumblrBase:
         #         }
         #
         #     return post
+
+
+class Tumblr(TumblrBase):
+    def info(self, blog=''):
+        if blog:
+            return self.api_request('GET', f'/v2/blog/{blog}.tumblr.com/info')
+        else:
+            return self.api_request('GET', '/v2/user/info')
