@@ -4,6 +4,8 @@ from urllib.parse import urlencode
 import json
 
 class TumblrBase:
+    api_url = 'https://api.tumblr.com/'
+
     def __init__(self, oauth_key='', oauth_key_sec='', oauth_token='', oauth_token_sec='', file='tumblr.conf.json', quiet=True):
         if type(oauth_key) != str or type(oauth_key_sec) != str:
             raise TypeError('Api keys need to be passed as strings')
@@ -109,22 +111,21 @@ class TumblrBase:
     def tokens(self):
         print(f'OAuth token = {self.oauth_token}\nOAuth secret token = {self.oauth_token_sec}')
 
-    def api_request(url, mode, **params):
-        if type(url) != str or type(mode) != str:
+    def api_request(self, mode, req_url, **params):
+        if type(mode) != str or type(req_url) != str:
             raise TypeError('URL and mode must be passed as strings')
 
         self.check_oauth()
 
-        url = url.rstrip('/') + '/'
-        url_param = urlencode(params)
-        url += '?'*bool(url_param)+url_param
+        req_url = req_url.strip('/')
+        req_params = urlencode(params)
+        req_url += '/?'*bool(req_params)+req_params
 
         if mode == 'GET':
-            get = requests.get(url, auth=self.oauth)
+            get = requests.get(self.api_url+req_url, auth=self.oauth)
             get = json.loads(get.text)
             get = {
-                'user': user,
-                'section': section,
+                'request': req_url,
                 'meta': get['meta'],
                 'errors': get.get('errors', [{None: None}]),
                 'response': get.get('response', [{None: None}]),
