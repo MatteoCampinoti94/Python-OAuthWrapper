@@ -150,6 +150,16 @@ class TumblrBase:
 class Tumblr(TumblrBase):
     def info(self, blog=''):
         if blog:
-            return self.api_request('GET', f'/v2/blog/{blog}.tumblr.com/info')
+            req_url = f'/v2/blog/{blog}.tumblr.com/info'
         else:
-            return self.api_request('GET', '/v2/user/info')
+            req_url = '/v2/user/info'
+
+        return self.api_request('GET', req_url)
+
+    def likes(self, blog='', **params):
+        if blog:
+            req_url = f'/v2/blog/{blog}.tumblr.com/likes'
+        else:
+            req_url = '/v2/user/likes'
+
+        return self.api_request('GET', req_url, params, ['limit', 'offset, ''before', 'after'])
