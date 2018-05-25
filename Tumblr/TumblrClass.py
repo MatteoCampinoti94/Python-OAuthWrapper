@@ -162,4 +162,12 @@ class Tumblr(TumblrBase):
         else:
             req_url = '/v2/user/likes'
 
-        return self.api_request('GET', req_url, params, ['limit', 'offset, ''before', 'after'])
+        return self.api_request('GET', req_url, params, ['limit', 'offset', 'before', 'after'])
+
+    def following(self, blog='', **params):
+        if blog:
+            req_url = f'/v2/blog/{blog}.tumblr.com/following'
+        else:
+            req_url = '/v2/user/following'
+
+        return self.api_request('GET', req_url, params, ['limit', 'offset'])
