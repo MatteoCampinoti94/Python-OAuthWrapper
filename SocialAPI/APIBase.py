@@ -58,6 +58,12 @@ class APIBase:
         with open(file, 'w') as conf:
             conf.write(json.dumps(oauth, indent=2)+'\n')
 
+    def keys(self):
+        print(f'Consumer key = {self.oauth_key}\nConsumer secret key = {self.oauth_key_sec}')
+
+    def tokens(self):
+        print(f'OAuth token = {self.oauth_token}\nOAuth secret token = {self.oauth_token_sec}')
+
     def check_oauth(self):
         if self.oauth_token and self.oauth_token_sec and (not self.oauth_key or not self.oauth_key_sec):
             raise TypeError('Needs both oauth consumer keys if tokens are provided')
@@ -69,7 +75,7 @@ class APIBase:
 
         self.oauth = OAuth1(self.oauth_key, self.oauth_key_sec, self.oauth_token, self.oauth_token_sec)
 
-    def get_tokens(self, save=False, quiet=True):
+    def api_tokens(self, save, quiet, file=''):
         tokenurl_request = self.tokenurl_request
         tokenurl_authorize = self.tokenurl_authorize
         tokenurl_access = self.tokenurl_access
@@ -99,15 +105,9 @@ class APIBase:
         self.check_oauth()
 
         if save:
-            self.conf_save()
+            self.conf_save(file)
         if not quiet:
             self.tokens()
-
-    def keys(self):
-        print(f'Consumer key = {self.oauth_key}\nConsumer secret key = {self.oauth_key_sec}')
-
-    def tokens(self):
-        print(f'OAuth token = {self.oauth_token}\nOAuth secret token = {self.oauth_token_sec}')
 
     def api_request(self, mode, req_url, params={}, valid_params=[]):
         if type(mode) != str or type(req_url) != str:

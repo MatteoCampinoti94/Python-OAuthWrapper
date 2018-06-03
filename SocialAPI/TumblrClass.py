@@ -6,6 +6,9 @@ class Tumblr(APIBase):
     tokenurl_authorize = 'http://www.tumblr.com/oauth/authorize'
     tokenurl_access = 'http://www.tumblr.com/oauth/access_token'
 
+    def get_tokens(self, save, quiet, file='tumblr.conf.json'):
+        self.api_tokens(save, quiet, file, ssl=False)
+
     def info(self, blog=''):
         if blog:
             req_url = f'/v2/blog/{blog}.tumblr.com/info'
