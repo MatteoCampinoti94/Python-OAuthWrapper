@@ -1,1 +1,1 @@
-from .Tumblr import *
+from .SocialAPI import *

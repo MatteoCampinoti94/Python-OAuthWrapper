@@ -1,12 +1,10 @@
+import json
 import requests
 from requests_oauthlib import OAuth1, OAuth1Session
 from urllib.parse import urlencode
-import json
 
-class TumblrBase:
-    api_url = 'https://api.tumblr.com/'
-
-    def __init__(self, oauth_key='', oauth_key_sec='', oauth_token='', oauth_token_sec='', file='tumblr.conf.json', quiet=True):
+class APIBase:
+    def __init__(self, oauth_key='', oauth_key_sec='', oauth_token='', oauth_token_sec='', file='', quiet=True):
         if type(oauth_key) != str or type(oauth_key_sec) != str:
             raise TypeError('Api keys need to be passed as strings')
         if type(oauth_token) != str or type(oauth_token_sec) != str:
@@ -30,7 +28,7 @@ class TumblrBase:
                 self.keys()
                 self.tokens()
 
-    def conf_read(self, file='tumblr.conf.json', quiet=True):
+    def conf_read(self, file='', quiet=True):
         with open(file, 'r') as conf:
             conf = json.load(conf)
 
@@ -50,7 +48,7 @@ class TumblrBase:
                 self.keys()
                 self.tokens()
 
-    def conf_save(self, file='tumblr.conf.json'):
+    def conf_save(self, file=''):
         oauth = {
             "oauth_key": self.oauth_key,
             "oauth_key_sec": self.oauth_key_sec,
@@ -72,9 +70,9 @@ class TumblrBase:
         self.oauth = OAuth1(self.oauth_key, self.oauth_key_sec, self.oauth_token, self.oauth_token_sec)
 
     def get_tokens(self, save=False, quiet=True):
-        tokenurl_request = 'http://www.tumblr.com/oauth/request_token'
-        tokenurl_authorize = 'http://www.tumblr.com/oauth/authorize'
-        tokenurl_access = 'http://www.tumblr.com/oauth/access_token'
+        tokenurl_request = self.tokenurl_request
+        tokenurl_authorize = self.tokenurl_authorize
+        tokenurl_access = self.tokenurl_access
 
         oauth_session = OAuth1Session(self.oauth_key, self.oauth_key_sec)
         oauth_response = oauth_session.fetch_request_token(tokenurl_request)
@@ -139,56 +137,3 @@ class TumblrBase:
                 get += chunk
 
             return get
-
-
-class Tumblr(TumblrBase):
-    def info(self, blog=''):
-        if blog:
-            req_url = f'/v2/blog/{blog}.tumblr.com/info'
-        else:
-            req_url = '/v2/user/info'
-
-        return self.api_request('GET', req_url)
-
-    def likes(self, blog='', **params):
-        if blog:
-            req_url = f'/v2/blog/{blog}.tumblr.com/likes'
-        else:
-            req_url = '/v2/user/likes'
-        valid_params = ['limit', 'offset', 'before', 'after']
-
-        return self.api_request('GET', req_url, params, valid_params)
-
-    def following(self, blog='', **params):
-        if blog:
-            req_url = f'/v2/blog/{blog}.tumblr.com/following'
-        else:
-            req_url = '/v2/user/following'
-        valid_params = ['limit', 'offset']
-
-        return self.api_request('GET', req_url, params, valid_params)
-
-    def dashboard(self, **params):
-        req_url = '/v2/user/dashboard'
-        valid_params = ['limit', 'offset', 'type', 'since_id', 'reblog_info', 'notes_info']
-
-        return self.api_request('GET', req_url, params, valid_params)
-
-    def posts(self, blog, type='', **params):
-        req_url = f'/v2/blog/{blog}.tumblr.com/posts/{type}'
-        valid_params = ['id', 'tag', 'limit', 'offset', 'reblog_info', 'notes_info', 'filter']
-
-        return self.api_request('GET', req_url, params, valid_params)
-
-    def avatar(self, blog, size=64, write=False, write_file=''):
-        req_url = f'/v2/blog/{blog}/avatar/{size}'
-
-        avatar = self.api_request('GET-BINARY', req_url)
-
-        if write:
-            if not write_file:
-                write_file = f'{blog}_{size}.png'
-            with open(write_file, 'wb') as f:
-                f.write(avatar)
-        else:
-            return avatar
