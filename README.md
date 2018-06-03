@@ -1,2 +1,2 @@
 # TumblrBackup
-Python script to easily handle Tumblr get requests.
+Python script to easily handle OAuth API requests for social networks.
