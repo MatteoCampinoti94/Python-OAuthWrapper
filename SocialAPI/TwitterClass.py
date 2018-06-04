@@ -97,7 +97,7 @@ class Twitter(APIBase):
 
         return response
 
-    def friendsids():
+    def friendsids(self, raw=False, **params):
         req_url = '/friends/list.json'
         valid_params = ['user_id', 'screen_name', 'cursor', 'stringify_ids', 'count']
 
@@ -108,7 +108,7 @@ class Twitter(APIBase):
 
         return response
 
-    def friendslist():
+    def friendslist(self, raw=False, **params):
         req_url = '/friends/list.json'
         valid_params = ['user_id', 'screen_name', 'cursor', 'count', 'skip_status', 'include_user_entities']
 
