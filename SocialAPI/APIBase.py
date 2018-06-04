@@ -157,3 +157,5 @@ class APIBase:
                 get += chunk
 
             return get
+        elif mode == 'POST':
+            return requests.post(self.api_url+req_url, auth=self.oauth)
