@@ -112,6 +112,9 @@ class APIBase:
         if not quiet:
             self.tokens()
 
+    def api_tokens_oauth2(self, save, quiet, file=''):
+        raise TypeError('OAuth2 not implemented yet')
+
     def api_request(self, mode, req_url, params={}, valid_params=[]):
         if type(mode) != str or type(req_url) != str:
             raise TypeError('URL and mode must be passed as strings')
