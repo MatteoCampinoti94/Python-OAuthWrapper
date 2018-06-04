@@ -3,6 +3,21 @@ import requests
 from urllib.parse import quote_plus
 from .APIBase import APIBase
 
+def json_parser(data, req_url):
+    status = data.status_code
+
+    response = {
+        'request': req_url,
+        'status_code': status,
+        }
+
+    if status == 200:
+        response['response'] = data.json()
+    else:
+        response['response'] = data.text
+
+    return response
+
 class Twitter(APIBase):
     api_url = 'https://api.twitter.com/1.1/'
     tokenurl_request = 'https://api.twitter.com/oauth/request_token'
@@ -40,4 +55,5 @@ class Twitter(APIBase):
         req_url = '/favorites/list.json'
         valid_params = ['user_id', 'screen_name', 'count', 'since_id', 'max_id', 'include_entities']
 
-        return self.APIRequest('GET', req_url, params, valid_params)
+        response = self.APIRequest('GET', req_url, params, valid_params)
+        return json_parser(response, req_url)
