@@ -59,10 +59,10 @@ class Twitter(APIBase):
 
         response = self.APIRequest('GET', req_url, params, valid_params)
 
-        if raw:
-            return response
-        else:
-            return json_parser(response, req_url, params)
+        if not raw:
+            response = json_parser(response, req_url, params)
+
+        return response
 
     def favorites(self, raw=False, **params):
         req_url = '/favorites/list.json'
@@ -70,10 +70,10 @@ class Twitter(APIBase):
 
         response = self.APIRequest('GET', req_url, params, valid_params)
 
-        if raw:
-            return response
-        else:
-            return json_parser(response, req_url, params)
+        if not raw:
+            response = json_parser(response, req_url, params)
+
+        return response
 
     def favoritecreate(self, raw=False, **params):
         req_url = '/favorites/create.json'
@@ -81,10 +81,10 @@ class Twitter(APIBase):
 
         response = self.APIRequest('POST', req_url, params, valid_params)
 
-        if raw:
-            return response
-        else:
-            return json_parser(response, req_url, params)
+        if not raw:
+            response = json_parser(response, req_url, params)
+
+        return response
 
     def favoritedestroy(self, raw=False, **params):
         req_url = '/favorites/destroy.json'
@@ -92,7 +92,7 @@ class Twitter(APIBase):
 
         response = self.APIRequest('POST', req_url, params, valid_params)
 
-        if raw:
-            return response
-        else:
-            return json_parser(response, req_url, params)
+        if not raw:
+            response = json_parser(response, req_url, params)
+
+        return response
