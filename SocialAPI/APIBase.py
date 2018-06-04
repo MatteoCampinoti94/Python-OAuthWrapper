@@ -1,6 +1,6 @@
 import json
 import requests
-from requests_oauthlib import OAuth1, OAuth1Session
+from requests_oauthlib import OAuth1, OAuth1Session, OAuth2, OAuth2Session
 from urllib.parse import urlencode
 
 class APIBase:
@@ -73,14 +73,20 @@ class APIBase:
         if self.oauth_key == '':
             raise TypeError('Consumer key cannot be empty')
 
-        self.oauth = OAuth1(self.oauth_key, self.oauth_key_sec, self.oauth_token, self.oauth_token_sec)
+        if self.oauthv == 1:
+            self.oauth = OAuth1(self.oauth_key, self.oauth_key_sec, self.oauth_token, self.oauth_token_sec)
+        elif self.oauthv == 2:
+            self.oauth = OAuth2(self.oauth_key, self.oauth_key_sec, self.oauth_token, self.oauth_token_sec)
 
     def api_tokens(self, save, quiet, file=''):
         tokenurl_request = self.tokenurl_request
         tokenurl_authorize = self.tokenurl_authorize
         tokenurl_access = self.tokenurl_access
 
-        oauth_session = OAuth1Session(self.oauth_key, self.oauth_key_sec)
+        if self.oauthv == 1:
+            oauth_session = OAuth1Session(self.oauth_key, self.oauth_key_sec)
+        elif self.oauthv == 2:
+            oauth_session = OAuth2Session(self.oauth_key, self.oauth_key_sec)
         oauth_response = oauth_session.fetch_request_token(tokenurl_request)
 
         oauth_token = oauth_response['oauth_token']
@@ -93,9 +99,14 @@ class APIBase:
         oauth_verifier = oauth_session.parse_authorization_response(oauth_verifier)
         oauth_verifier = oauth_verifier['oauth_verifier']
 
-        oauth_session = OAuth1Session(self.oauth_key, self.oauth_key_sec,
-            oauth_token, oauth_token_sec,
-            verifier=oauth_verifier)
+        if self.oauthv == 1:
+            oauth_session = OAuth1Session(self.oauth_key, self.oauth_key_sec,
+                oauth_token, oauth_token_sec,
+                verifier=oauth_verifier)
+        elif self.oauthv == 2:
+            oauth_session = OAuth2Session(self.oauth_key, self.oauth_key_sec,
+                oauth_token, oauth_token_sec,
+                verifier=oauth_verifier)
 
         oauth_tokens = oauth_session.fetch_access_token(tokenurl_access)
 
