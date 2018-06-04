@@ -1,6 +1,17 @@
 from requests_oauthlib import OAuth1Session
 from .APIBase import APIBase
 
+def json_parser(response, req_url):
+    response = response.json()
+    response = {
+        'request': req_url,
+        'meta': response['meta'],
+        'errors': response.get('errors', [{None: None}]),
+        'response': response.get('response', [{None: None}]),
+        }
+
+    return response
+
 class Tumblr(APIBase):
     conf_file = ''
     api_url = 'https://api.tumblr.com/'
@@ -18,7 +29,8 @@ class Tumblr(APIBase):
         else:
             req_url = '/v2/user/info'
 
-        return self.APIRequest('GET', req_url)
+        response =  self.APIRequest('GET', req_url)
+        return json_parser(response, req_url)
 
     def likes(self, blog='', **params):
         if blog:
@@ -27,7 +39,8 @@ class Tumblr(APIBase):
             req_url = '/v2/user/likes'
         valid_params = ['limit', 'offset', 'before', 'after']
 
-        return self.APIRequest('GET', req_url, params, valid_params)
+        response =  self.APIRequest('GET', req_url, params, valid_params)
+        return json_parser(response, req_url)
 
     def following(self, blog='', **params):
         if blog:
@@ -36,19 +49,22 @@ class Tumblr(APIBase):
             req_url = '/v2/user/following'
         valid_params = ['limit', 'offset']
 
-        return self.APIRequest('GET', req_url, params, valid_params)
+        response =  self.APIRequest('GET', req_url, params, valid_params)
+        return json_parser(response, req_url)
 
     def dashboard(self, **params):
         req_url = '/v2/user/dashboard'
         valid_params = ['limit', 'offset', 'type', 'since_id', 'reblog_info', 'notes_info']
 
-        return self.APIRequest('GET', req_url, params, valid_params)
+        response =  self.APIRequest('GET', req_url, params, valid_params)
+        return json_parser(response, req_url)
 
     def posts(self, blog, type='', **params):
         req_url = f'/v2/blog/{blog}.tumblr.com/posts/{type}'
         valid_params = ['id', 'tag', 'limit', 'offset', 'reblog_info', 'notes_info', 'filter']
 
-        return self.APIRequest('GET', req_url, params, valid_params)
+        response =  self.APIRequest('GET', req_url, params, valid_params)
+        return json_parser(response, req_url)
 
     def avatar(self, blog, size=64, write=False, write_file=''):
         req_url = f'/v2/blog/{blog}/avatar/{size}'
