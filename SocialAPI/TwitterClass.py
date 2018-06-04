@@ -118,3 +118,25 @@ class Twitter(APIBase):
             response = json_parser(response, req_url, params)
 
         return response
+
+    def friendshipcreate(self, raw=False, **params):
+        req_url = '/friendships/create.json'
+        valid_params = ['screen_name', 'user_id', 'follow']
+
+        response = self.APIRequest('POST', req_url, params, valid_params)
+
+        if not raw:
+            response = json_parser(response, req_url, params)
+
+        return response
+
+    def friendshipdestroy(self, raw=False, **params):
+        req_url = '/friendships/destroy.json'
+        valid_params = ['screen_name', 'user_id']
+
+        response = self.APIRequest('POST', req_url, params, valid_params)
+
+        if not raw:
+            response = json_parser(response, req_url, params)
+
+        return response
