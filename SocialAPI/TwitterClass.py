@@ -9,7 +9,8 @@ def json_parser(data, req_url, parameters):
     response = {
         'request': req_url,
         'parameters': parameters,
-        'status_code': status
+        'status_code': status,
+        'headers': data.headers
         }
 
     if data.text:
@@ -52,30 +53,46 @@ class Twitter(APIBase):
         if not quiet:
             self.tokens()
 
-    def ratelimit(self, **params):
+    def ratelimit(self, raw=False, **params):
         req_url = '/application/rate_limit_status.json'
         valid_params = ['resources']
 
         response = self.APIRequest('GET', req_url, params, valid_params)
-        return json_parser(response, req_url, params)
 
-    def favorites(self, **params):
+        if raw:
+            return response
+        else:
+            return json_parser(response, req_url, params)
+
+    def favorites(self, raw=False, **params):
         req_url = '/favorites/list.json'
         valid_params = ['user_id', 'screen_name', 'count', 'since_id', 'max_id', 'include_entities']
 
         response = self.APIRequest('GET', req_url, params, valid_params)
-        return json_parser(response, req_url, params)
 
-    def favoritecreate(self, **params):
+        if raw:
+            return response
+        else:
+            return json_parser(response, req_url, params)
+
+    def favoritecreate(self, raw=False, **params):
         req_url = '/favorites/create.json'
         valid_params = ['id','include_entities']
 
         response = self.APIRequest('POST', req_url, params, valid_params)
-        return json_parser(response, req_url, params)
 
-    def favoritedestroy(self, **params):
+        if raw:
+            return response
+        else:
+            return json_parser(response, req_url, params)
+
+    def favoritedestroy(self, raw=False, **params):
         req_url = '/favorites/destroy.json'
         valid_params = ['id','include_entities']
 
         response = self.APIRequest('POST', req_url, params, valid_params)
-        return json_parser(response, req_url, params)
+
+        if raw:
+            return response
+        else:
+            return json_parser(response, req_url, params)
