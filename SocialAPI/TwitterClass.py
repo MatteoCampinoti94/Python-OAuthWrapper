@@ -15,7 +15,7 @@ class Twitter(APIBase):
     def GetTokens(self, save=False, file=conf_file, quiet=True):
         self.GetOAuth1Tokens('pin', save, file, quiet)
 
-    def GetAppAuth(self, save, quiet, file='twitter.conf.json'):
+    def GetAppAuth(self, save=False, quiet=True, file='twitter.conf.json'):
         key = quote_plus(self.oauth_key)
         secret = quote_plus(self.oauth_key_sec)
         bearer_token = base64.b64encode(f'{key}:{secret}'.encode('utf8'))
@@ -30,6 +30,7 @@ class Twitter(APIBase):
                             headers=post_headers)
 
         self.oauth2_token = res.json()
+        self.api_oauth()
 
         if save:
             self.conf_save(file)
