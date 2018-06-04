@@ -21,6 +21,7 @@ class APIBase:
             self.oauth_key_sec = oauth_key_sec
             self.oauth_token = oauth_token
             self.oauth_token_sec = oauth_token_sec
+            self.oauth2_token = None
 
             self.api_oauth()
 
@@ -36,11 +37,17 @@ class APIBase:
             oauth_key_sec = conf.get('oauth_key_sec', '')
             oauth_token = conf.get('oauth_token', '')
             oauth_token_sec = conf.get('oauth_token_sec', '')
+            oauth2_token_type = conf.get('oauth2_token_type', '')
+            oauth2_token = conf.get('oauth2_token', '')
 
             self.oauth_key = oauth_key
             self.oauth_key_sec = oauth_key_sec
             self.oauth_token = oauth_token
             self.oauth_token_sec = oauth_token_sec
+            if oauth2_token_type and oauth2_token:
+                self.oauth2_token = {'token_type': oauth2_token_type, 'access_token': oauth2_token}
+            else:
+                self.oauth2_token = None
 
             self.api_oauth()
 
@@ -55,6 +62,11 @@ class APIBase:
             "oauth_token": self.oauth_token,
             "oauth_token_sec": self.oauth_token_sec
             }
+
+        if self.oauth2_token:
+            oauth["oauth2_token_type"] = self.oauth2_token['token_type']
+            oauth["oauth2_token"] = self.oauth2_token['access_token']
+
         with open(file, 'w') as conf:
             conf.write(json.dumps(oauth, indent=2)+'\n')
 
@@ -62,7 +74,10 @@ class APIBase:
         print(f'Consumer key = {self.oauth_key}\nConsumer secret key = {self.oauth_key_sec}')
 
     def tokens(self):
-        print(f'OAuth token = {self.oauth_token}\nOAuth secret token = {self.oauth_token_sec}')
+        if self.oauth2_token:
+            print(f'OAuth2 token type = {self.oauth2_token["token_type"]}\nOAuth2 token = {self.oauth2_token["access_token"]}')
+        else:
+            print(f'OAuth token = {self.oauth_token}\nOAuth secret token = {self.oauth_token_sec}')
 
     def api_oauth(self):
         if self.oauth_token and self.oauth_token_sec and (not self.oauth_key or not self.oauth_key_sec):
@@ -73,10 +88,10 @@ class APIBase:
         if self.oauth_key == '':
             raise TypeError('Consumer key cannot be empty')
 
-        if self.oauthv == 1:
-            self.oauth = OAuth1(self.oauth_key, self.oauth_key_sec, self.oauth_token, self.oauth_token_sec)
-        elif self.oauthv == 2:
-            raise TypeError('OAuth2 not implemented yet')
+        self.oauth = OAuth1(self.oauth_key, self.oauth_key_sec, self.oauth_token, self.oauth_token_sec)
+
+        if self.oauthv == 2 and self.oauth2_token:
+            self.oauth = OAuth2(token=self.oauth2_token)
 
     def api_request(self, mode, req_url, params={}, valid_params=[]):
         if type(mode) != str or type(req_url) != str:
