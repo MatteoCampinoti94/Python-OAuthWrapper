@@ -7,8 +7,8 @@ def json_parser(response, req_url, parameters):
         'request': req_url,
         'parameters': parameters,
         'meta': response['meta'],
-        'errors': response.get('errors', [{None: None}]),
-        'response': response.get('response', [{None: None}]),
+        'errors': response.get('errors', [{}]),
+        'response': response.get('response', [{}]),
         }
 
     return response
