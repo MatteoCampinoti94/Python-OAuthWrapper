@@ -14,7 +14,7 @@ def json_parser(response, req_url):
 
 class Tumblr(APIBase):
     conf_file = ''
-    api_url = 'https://api.tumblr.com/'
+    api_url = 'https://api.tumblr.com/v2/'
     tokenurl_request = 'http://www.tumblr.com/oauth/request_token'
     tokenurl_authorize = 'http://www.tumblr.com/oauth/authorize'
     tokenurl_access = 'http://www.tumblr.com/oauth/access_token'
@@ -25,18 +25,18 @@ class Tumblr(APIBase):
 
     def info(self, blog=''):
         if blog:
-            req_url = f'/v2/blog/{blog}.tumblr.com/info'
+            req_url = f'/blog/{blog}.tumblr.com/info'
         else:
-            req_url = '/v2/user/info'
+            req_url = '/user/info'
 
         response =  self.APIRequest('GET', req_url)
         return json_parser(response, req_url)
 
     def likes(self, blog='', **params):
         if blog:
-            req_url = f'/v2/blog/{blog}.tumblr.com/likes'
+            req_url = f'/blog/{blog}.tumblr.com/likes'
         else:
-            req_url = '/v2/user/likes'
+            req_url = '/user/likes'
         valid_params = ['limit', 'offset', 'before', 'after']
 
         response =  self.APIRequest('GET', req_url, params, valid_params)
@@ -44,30 +44,30 @@ class Tumblr(APIBase):
 
     def following(self, blog='', **params):
         if blog:
-            req_url = f'/v2/blog/{blog}.tumblr.com/following'
+            req_url = f'/blog/{blog}.tumblr.com/following'
         else:
-            req_url = '/v2/user/following'
+            req_url = '/user/following'
         valid_params = ['limit', 'offset']
 
         response =  self.APIRequest('GET', req_url, params, valid_params)
         return json_parser(response, req_url)
 
     def dashboard(self, **params):
-        req_url = '/v2/user/dashboard'
+        req_url = '/user/dashboard'
         valid_params = ['limit', 'offset', 'type', 'since_id', 'reblog_info', 'notes_info']
 
         response =  self.APIRequest('GET', req_url, params, valid_params)
         return json_parser(response, req_url)
 
     def posts(self, blog, type='', **params):
-        req_url = f'/v2/blog/{blog}.tumblr.com/posts/{type}'
+        req_url = f'/blog/{blog}.tumblr.com/posts/{type}'
         valid_params = ['id', 'tag', 'limit', 'offset', 'reblog_info', 'notes_info', 'filter']
 
         response =  self.APIRequest('GET', req_url, params, valid_params)
         return json_parser(response, req_url)
 
     def avatar(self, blog, size=64, write=False, write_file=''):
-        req_url = f'/v2/blog/{blog}/avatar/{size}'
+        req_url = f'/blog/{blog}/avatar/{size}'
 
         avatar = self.APIRequest('GET-BINARY', req_url)
 
