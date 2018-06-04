@@ -57,3 +57,10 @@ class Twitter(APIBase):
 
         response = self.APIRequest('GET', req_url, params, valid_params)
         return json_parser(response, req_url)
+
+    def ratelimit(self, **params):
+        req_url = '/application/rate_limit_status.json'
+        valid_params = ['resources']
+
+        response = self.APIRequest('GET', req_url, params, valid_params)
+        return json_parser(response, req_url)
