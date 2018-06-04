@@ -76,7 +76,7 @@ class APIBase:
         if self.oauthv == 1:
             self.oauth = OAuth1(self.oauth_key, self.oauth_key_sec, self.oauth_token, self.oauth_token_sec)
         elif self.oauthv == 2:
-            self.oauth = OAuth2(self.oauth_key, self.oauth_key_sec, self.oauth_token, self.oauth_token_sec)
+            pass
 
     def api_tokens(self, save, quiet, file=''):
         tokenurl_request = self.tokenurl_request
@@ -86,7 +86,7 @@ class APIBase:
         if self.oauthv == 1:
             oauth_session = OAuth1Session(self.oauth_key, self.oauth_key_sec)
         elif self.oauthv == 2:
-            oauth_session = OAuth2Session(self.oauth_key, self.oauth_key_sec)
+            pass
         oauth_response = oauth_session.fetch_request_token(tokenurl_request)
 
         oauth_token = oauth_response['oauth_token']
@@ -104,9 +104,7 @@ class APIBase:
                 oauth_token, oauth_token_sec,
                 verifier=oauth_verifier)
         elif self.oauthv == 2:
-            oauth_session = OAuth2Session(self.oauth_key, self.oauth_key_sec,
-                oauth_token, oauth_token_sec,
-                verifier=oauth_verifier)
+            pass
 
         oauth_tokens = oauth_session.fetch_access_token(tokenurl_access)
 
