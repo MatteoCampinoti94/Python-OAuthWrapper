@@ -52,6 +52,13 @@ class Twitter(APIBase):
         if not quiet:
             self.tokens()
 
+    def ratelimit(self, **params):
+        req_url = '/application/rate_limit_status.json'
+        valid_params = ['resources']
+
+        response = self.APIRequest('GET', req_url, params, valid_params)
+        return json_parser(response, req_url, params)
+
     def favorites(self, **params):
         req_url = '/favorites/list.json'
         valid_params = ['user_id', 'screen_name', 'count', 'since_id', 'max_id', 'include_entities']
@@ -59,9 +66,16 @@ class Twitter(APIBase):
         response = self.APIRequest('GET', req_url, params, valid_params)
         return json_parser(response, req_url, params)
 
-    def ratelimit(self, **params):
-        req_url = '/application/rate_limit_status.json'
-        valid_params = ['resources']
+    def favoritecreate(self, **params):
+        req_url = '/favorites/create.json'
+        valid_params = ['id','include_entities']
 
-        response = self.APIRequest('GET', req_url, params, valid_params)
+        response = self.APIRequest('POST', req_url, params, valid_params)
+        return json_parser(response, req_url, params)
+
+    def favoritedestroy(self, **params):
+        req_url = '/favorites/destroy.json'
+        valid_params = ['id','include_entities']
+
+        response = self.APIRequest('POST', req_url, params, valid_params)
         return json_parser(response, req_url, params)
