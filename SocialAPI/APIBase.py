@@ -145,16 +145,7 @@ class APIBase:
         req_url = req_url.strip('/') + '/?'*bool(params)+params
 
         if mode == 'GET':
-            get = requests.get(self.api_url+req_url, auth=self.oauth)
-            get = json.loads(get.text)
-            get = {
-                'request': req_url,
-                'meta': get['meta'],
-                'errors': get.get('errors', [{None: None}]),
-                'response': get.get('response', [{None: None}]),
-                }
-
-            return get
+            return requests.get(self.api_url+req_url, auth=self.oauth)
         elif mode == 'GET-BINARY':
             get = bytes()
             get_stream = requests.get(self.api_url+req_url, auth=self.oauth, stream=True)
