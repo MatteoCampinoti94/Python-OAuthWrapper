@@ -8,7 +8,7 @@ class Tumblr(APIBase):
     tokenurl_access = 'http://www.tumblr.com/oauth/access_token'
     oauthv = 1
 
-    def get_tokens(self, save, quiet, file='twitter.conf.json'):
+    def get_tokens(self, save, quiet, file='tumblr.conf.json'):
         tokenurl_request = self.tokenurl_request
         tokenurl_authorize = self.tokenurl_authorize
         tokenurl_access = self.tokenurl_access
