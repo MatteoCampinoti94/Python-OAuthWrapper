@@ -22,7 +22,7 @@ class APIBase:
             self.oauth_token = oauth_token
             self.oauth_token_sec = oauth_token_sec
 
-            self.check_oauth()
+            self.api_oauth()
 
             if not quiet:
                 self.keys()
@@ -42,7 +42,7 @@ class APIBase:
             self.oauth_token = oauth_token
             self.oauth_token_sec = oauth_token_sec
 
-            self.check_oauth()
+            self.api_oauth()
 
             if not quiet:
                 self.keys()
@@ -64,7 +64,7 @@ class APIBase:
     def tokens(self):
         print(f'OAuth token = {self.oauth_token}\nOAuth secret token = {self.oauth_token_sec}')
 
-    def check_oauth(self):
+    def api_oauth(self):
         if self.oauth_token and self.oauth_token_sec and (not self.oauth_key or not self.oauth_key_sec):
             raise TypeError('Needs both oauth consumer keys if tokens are provided')
         elif bool(self.oauth_token) + bool(self.oauth_token) == 1:
