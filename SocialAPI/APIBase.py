@@ -16,6 +16,8 @@ class APIBase:
         if type(quiet) != bool:
             raise TypeError('quiet argument needs to be of type bool')
 
+        self.conf_file = file
+
         if (oauth_key, oauth_key_sec, oauth_token, oauth_token_sec) == ('','','',''):
             self.ConfRead(file, quiet)
         else:
@@ -32,8 +34,6 @@ class APIBase:
                 self.tokens()
 
     def ConfRead(self, file=conf_file, quiet=True):
-        self.conf_file = file
-
         with open(file, 'r') as conf:
             conf = json.load(conf)
 
