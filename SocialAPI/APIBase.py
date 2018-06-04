@@ -146,7 +146,7 @@ class APIBase:
 
         params = {k: params[k] for k in params if k in valid_params}
         params = urlencode(params)
-        req_url = req_url.strip('/') + '/?'*bool(params)+params
+        req_url = req_url.lstrip('/') + '?'*bool(params)+params
 
         if mode == 'GET':
             return requests.get(self.api_url+req_url, auth=self.oauth)
