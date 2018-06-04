@@ -1,6 +1,6 @@
 import json
 import requests
-from requests_oauthlib import OAuth1, OAuth2
+from requests_oauthlib import OAuth1, OAuth1Session, OAuth2, OAuth2Session
 from urllib.parse import urlencode
 
 class APIBase:
@@ -29,7 +29,7 @@ class APIBase:
                 self.keys()
                 self.tokens()
 
-    def conf_read(self, file='', quiet=True):
+    def conf_read(self, file, quiet=True):
         with open(file, 'r') as conf:
             conf = json.load(conf)
 
@@ -55,7 +55,7 @@ class APIBase:
                 self.keys()
                 self.tokens()
 
-    def conf_save(self, file=''):
+    def conf_save(self, file):
         oauth = {
             "oauth_key": self.oauth_key,
             "oauth_key_sec": self.oauth_key_sec,
@@ -71,13 +71,14 @@ class APIBase:
             conf.write(json.dumps(oauth, indent=2)+'\n')
 
     def keys(self):
-        print(f'Consumer key = {self.oauth_key}\nConsumer secret key = {self.oauth_key_sec}')
+        if self.oauth_key:
+            print(f'Consumer key = {self.oauth_key}\nConsumer secret key = {self.oauth_key_sec}')
 
     def tokens(self):
+        if self.oauth_token:
+            print(f'OAuth token = {self.oauth_token}\nOAuth secret token = {self.oauth_token_sec}')
         if self.oauth2_token:
             print(f'OAuth2 token type = {self.oauth2_token["token_type"]}\nOAuth2 token = {self.oauth2_token["access_token"]}')
-        else:
-            print(f'OAuth token = {self.oauth_token}\nOAuth secret token = {self.oauth_token_sec}')
 
     def api_oauth(self):
         if self.oauth_token and self.oauth_token_sec and (not self.oauth_key or not self.oauth_key_sec):
@@ -92,6 +93,44 @@ class APIBase:
 
         if self.oauthv == 2 and self.oauth2_token:
             self.oauth = OAuth2(token=self.oauth2_token)
+
+    def GetOAuth1Tokens(self, verifier, save, file, quiet):
+        tokenurl_request = self.tokenurl_request
+        tokenurl_authorize = self.tokenurl_authorize
+        tokenurl_access = self.tokenurl_access
+
+        oauth_session = OAuth1Session(self.oauth_key, self.oauth_key_sec)
+        oauth_response = oauth_session.fetch_request_token(tokenurl_request)
+
+        oauth_token = oauth_response['oauth_token']
+        oauth_token_sec = oauth_response['oauth_token_secret']
+
+        print("Please go here and authorize:")
+        tokenurl_authorize = oauth_session.authorization_url(tokenurl_authorize)
+        print(tokenurl_authorize)
+
+        if verifier == 'url':
+            oauth_verifier = input('Paste the full redirect url here: ')
+            oauth_verifier = oauth_session.parse_authorization_response(oauth_verifier)
+            oauth_verifier = oauth_verifier['oauth_verifier']
+        elif verifier == 'pin':
+            oauth_verifier = input('Paste the pin code here: ').strip()
+
+        oauth_session = OAuth1Session(self.oauth_key, self.oauth_key_sec,
+            oauth_token, oauth_token_sec,
+            verifier=oauth_verifier)
+
+        oauth_tokens = oauth_session.fetch_access_token(tokenurl_access)
+
+        self.oauth_token = oauth_tokens.get('oauth_token', '')
+        self.oauth_token_sec = oauth_tokens.get('oauth_token_secret', '')
+
+        self.api_oauth()
+
+        if save:
+            self.conf_save(file)
+        if not quiet:
+            self.tokens()
 
     def api_request(self, mode, req_url, params={}, valid_params=[]):
         if type(mode) != str or type(req_url) != str:

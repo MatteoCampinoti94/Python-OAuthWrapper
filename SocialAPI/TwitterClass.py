@@ -1,16 +1,20 @@
 import base64
 import requests
-from urllib.parse import urlencode, quote_plus
+from urllib.parse import quote_plus
 from .APIBase import APIBase
 
 class Twitter(APIBase):
     api_url = 'https://api.twitter.com/1.1/'
-    tokenurl_request = 'http://api.twitter.com/oauth/request_token'
-    tokenurl_authorize = 'http://api.twitter.com/oauth/authorize'
-    tokenurl_access = 'http://api.twitter.com/oauth/access_token'
+    tokenurl_request = 'https://api.twitter.com/oauth/request_token'
+    tokenurl_authorize = 'https://api.twitter.com/oauth/authorize'
+    tokenurl_access = 'https://api.twitter.com/oauth/access_token'
+    tokenurl_oauth2 = 'https://api.twitter.com/oauth2/token'
     oauthv = 2
 
-    def get_tokens(self, save, quiet, file='twitter.conf.json'):
+    def GetTokens(self, save=False, file='twitter.conf.json', quiet=True):
+        self.GetOAuth1Tokens('pin', save, file, quiet)
+
+    def GetAppAuth(self, save, quiet, file='twitter.conf.json'):
         key = quote_plus(self.oauth_key)
         secret = quote_plus(self.oauth_key_sec)
         bearer_token = base64.b64encode(f'{key}:{secret}'.encode('utf8'))

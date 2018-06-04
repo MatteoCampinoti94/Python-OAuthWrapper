@@ -8,39 +8,8 @@ class Tumblr(APIBase):
     tokenurl_access = 'http://www.tumblr.com/oauth/access_token'
     oauthv = 1
 
-    def get_tokens(self, save, quiet, file='tumblr.conf.json'):
-        tokenurl_request = self.tokenurl_request
-        tokenurl_authorize = self.tokenurl_authorize
-        tokenurl_access = self.tokenurl_access
-
-        oauth_session = OAuth1Session(self.oauth_key, self.oauth_key_sec)
-        oauth_response = oauth_session.fetch_request_token(tokenurl_request)
-
-        oauth_token = oauth_response['oauth_token']
-        oauth_token_sec = oauth_response['oauth_token_secret']
-
-        print("Please go here and authorize:")
-        tokenurl_authorize = oauth_session.authorization_url(tokenurl_authorize)
-        print(tokenurl_authorize)
-        oauth_verifier = input('Paste the full redirect url here: ')
-        oauth_verifier = oauth_session.parse_authorization_response(oauth_verifier)
-        oauth_verifier = oauth_verifier['oauth_verifier']
-
-        oauth_session = OAuth1Session(self.oauth_key, self.oauth_key_sec,
-            oauth_token, oauth_token_sec,
-            verifier=oauth_verifier)
-
-        oauth_tokens = oauth_session.fetch_access_token(tokenurl_access)
-
-        self.oauth_token = oauth_tokens.get('oauth_token', '')
-        self.oauth_token_sec = oauth_tokens.get('oauth_token_secret', '')
-
-        self.api_oauth()
-
-        if save:
-            self.conf_save(file)
-        if not quiet:
-            self.tokens()
+    def GetTokens(self, save=False, file='tumblr.conf.json', quiet=True):
+        self.GetOAuth1Tokens('url', save, file, quiet)
 
     def info(self, blog=''):
         if blog:
