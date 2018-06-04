@@ -35,7 +35,7 @@ class Tumblr(APIBase):
         self.oauth_token = oauth_tokens.get('oauth_token', '')
         self.oauth_token_sec = oauth_tokens.get('oauth_token_secret', '')
 
-        self.check_oauth()
+        self.api_oauth()
 
         if save:
             self.conf_save(file)
