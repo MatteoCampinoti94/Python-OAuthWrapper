@@ -3,12 +3,13 @@ import requests
 from urllib.parse import quote_plus
 from .APIBase import APIBase
 
-def json_parser(data, req_url):
+def json_parser(data, req_url, parameters):
     status = data.status_code
 
     response = {
         'request': req_url,
-        'status_code': status,
+        'parameters': parameters,
+        'status_code': status
         }
 
     if status == 200:
@@ -56,11 +57,11 @@ class Twitter(APIBase):
         valid_params = ['user_id', 'screen_name', 'count', 'since_id', 'max_id', 'include_entities']
 
         response = self.APIRequest('GET', req_url, params, valid_params)
-        return json_parser(response, req_url)
+        return json_parser(response, req_url, params)
 
     def ratelimit(self, **params):
         req_url = '/application/rate_limit_status.json'
         valid_params = ['resources']
 
         response = self.APIRequest('GET', req_url, params, valid_params)
-        return json_parser(response, req_url)
+        return json_parser(response, req_url, params)
