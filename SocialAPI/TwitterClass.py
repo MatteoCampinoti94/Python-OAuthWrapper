@@ -36,8 +36,8 @@ class Twitter(APIBase):
         if not quiet:
             self.tokens()
 
-    # def favorites(self, **params):
-    #     req_url = '/favorites/list.json'
-    #     valid_params = ['user_id', 'screen_name', 'count', 'since_id', 'max_id', 'include_entities']
-    #
-    #     return self.APIRequest('GET', req_url, params, valid_params)
+    def favorites(self, **params):
+        req_url = '/favorites/list.json'
+        valid_params = ['user_id', 'screen_name', 'count', 'since_id', 'max_id', 'include_entities']
+
+        return self.APIRequest('GET', req_url, params, valid_params)
