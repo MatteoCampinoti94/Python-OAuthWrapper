@@ -4,6 +4,8 @@ from requests_oauthlib import OAuth1, OAuth1Session, OAuth2, OAuth2Session
 from urllib.parse import urlencode
 
 class APIBase:
+    conf_file = ''
+
     def __init__(self, oauth_key='', oauth_key_sec='', oauth_token='', oauth_token_sec='', file='', quiet=True):
         if type(oauth_key) != str or type(oauth_key_sec) != str:
             raise TypeError('Api keys need to be passed as strings')
@@ -15,7 +17,7 @@ class APIBase:
             raise TypeError('quiet argument needs to be of type bool')
 
         if (oauth_key, oauth_key_sec, oauth_token, oauth_token_sec) == ('','','',''):
-            self.conf_read(file, quiet)
+            self.ConfRead(file, quiet)
         else:
             self.oauth_key = oauth_key
             self.oauth_key_sec = oauth_key_sec
@@ -29,7 +31,9 @@ class APIBase:
                 self.keys()
                 self.tokens()
 
-    def conf_read(self, file, quiet=True):
+    def ConfRead(self, file=conf_file, quiet=True):
+        self.conf_file = file
+
         with open(file, 'r') as conf:
             conf = json.load(conf)
 
@@ -55,7 +59,7 @@ class APIBase:
                 self.keys()
                 self.tokens()
 
-    def conf_save(self, file):
+    def ConfSave(self, file=conf_file):
         oauth = {
             "oauth_key": self.oauth_key,
             "oauth_key_sec": self.oauth_key_sec,
@@ -94,7 +98,7 @@ class APIBase:
         if self.oauthv == 2 and self.oauth2_token:
             self.oauth = OAuth2(token=self.oauth2_token)
 
-    def GetOAuth1Tokens(self, verifier, save, file, quiet):
+    def GetOAuth1Tokens(self, verifier, save, file=conf_file, quiet=True):
         tokenurl_request = self.tokenurl_request
         tokenurl_authorize = self.tokenurl_authorize
         tokenurl_access = self.tokenurl_access
@@ -128,11 +132,11 @@ class APIBase:
         self.api_oauth()
 
         if save:
-            self.conf_save(file)
+            self.ConfSave(file)
         if not quiet:
             self.tokens()
 
-    def api_request(self, mode, req_url, params={}, valid_params=[]):
+    def APIRequest(self, mode, req_url, params={}, valid_params=[]):
         if type(mode) != str or type(req_url) != str:
             raise TypeError('URL and mode must be passed as strings')
 
