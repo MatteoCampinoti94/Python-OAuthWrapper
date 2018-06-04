@@ -96,3 +96,25 @@ class Twitter(APIBase):
             response = json_parser(response, req_url, params)
 
         return response
+
+    def friendsids():
+        req_url = '/friends/list.json'
+        valid_params = ['user_id', 'screen_name', 'cursor', 'stringify_ids', 'count']
+
+        response = self.APIRequest('GET', req_url, params, valid_params)
+
+        if not raw:
+            response = json_parser(response, req_url, params)
+
+        return response
+
+    def friendslist():
+        req_url = '/friends/list.json'
+        valid_params = ['user_id', 'screen_name', 'cursor', 'count', 'skip_status', 'include_user_entities']
+
+        response = self.APIRequest('GET', req_url, params, valid_params)
+
+        if not raw:
+            response = json_parser(response, req_url, params)
+
+        return response
