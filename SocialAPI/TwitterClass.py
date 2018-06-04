@@ -12,7 +12,7 @@ def json_parser(data, req_url, parameters):
         'status_code': status
         }
 
-    if status == 200:
+    if data.text:
         response['response'] = data.json()
     else:
         response['response'] = data.text
