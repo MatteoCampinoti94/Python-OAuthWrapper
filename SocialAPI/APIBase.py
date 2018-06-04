@@ -78,48 +78,9 @@ class APIBase:
         elif self.oauthv == 2:
             raise TypeError('OAuth2 not implemented yet')
 
-    def api_tokens_oauth1(self, save, quiet, file=''):
-        tokenurl_request = self.tokenurl_request
-        tokenurl_authorize = self.tokenurl_authorize
-        tokenurl_access = self.tokenurl_access
-
-        oauth_session = OAuth1Session(self.oauth_key, self.oauth_key_sec)
-        oauth_response = oauth_session.fetch_request_token(tokenurl_request)
-
-        oauth_token = oauth_response['oauth_token']
-        oauth_token_sec = oauth_response['oauth_token_secret']
-
-        print("Please go here and authorize:")
-        tokenurl_authorize = oauth_session.authorization_url(tokenurl_authorize)
-        print(tokenurl_authorize)
-        oauth_verifier = input('Paste the full redirect url here: ')
-        oauth_verifier = oauth_session.parse_authorization_response(oauth_verifier)
-        oauth_verifier = oauth_verifier['oauth_verifier']
-
-        oauth_session = OAuth1Session(self.oauth_key, self.oauth_key_sec,
-            oauth_token, oauth_token_sec,
-            verifier=oauth_verifier)
-
-        oauth_tokens = oauth_session.fetch_access_token(tokenurl_access)
-
-        self.oauth_token = oauth_tokens.get('oauth_token', '')
-        self.oauth_token_sec = oauth_tokens.get('oauth_token_secret', '')
-
-        self.check_oauth()
-
-        if save:
-            self.conf_save(file)
-        if not quiet:
-            self.tokens()
-
-    def api_tokens_oauth2(self, save, quiet, file=''):
-        raise TypeError('OAuth2 not implemented yet')
-
     def api_request(self, mode, req_url, params={}, valid_params=[]):
         if type(mode) != str or type(req_url) != str:
             raise TypeError('URL and mode must be passed as strings')
-
-        self.check_oauth()
 
         params = {k: params[k] for k in params if k in valid_params}
         params = urlencode(params)
