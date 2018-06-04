@@ -78,15 +78,12 @@ class APIBase:
         elif self.oauthv == 2:
             raise TypeError('OAuth2 not implemented yet')
 
-    def api_tokens(self, save, quiet, file=''):
+    def api_tokens_oauth1(self, save, quiet, file=''):
         tokenurl_request = self.tokenurl_request
         tokenurl_authorize = self.tokenurl_authorize
         tokenurl_access = self.tokenurl_access
 
-        if self.oauthv == 1:
-            oauth_session = OAuth1Session(self.oauth_key, self.oauth_key_sec)
-        elif self.oauthv == 2:
-            raise TypeError('OAuth2 not implemented yet')
+        oauth_session = OAuth1Session(self.oauth_key, self.oauth_key_sec)
         oauth_response = oauth_session.fetch_request_token(tokenurl_request)
 
         oauth_token = oauth_response['oauth_token']
@@ -99,12 +96,9 @@ class APIBase:
         oauth_verifier = oauth_session.parse_authorization_response(oauth_verifier)
         oauth_verifier = oauth_verifier['oauth_verifier']
 
-        if self.oauthv == 1:
-            oauth_session = OAuth1Session(self.oauth_key, self.oauth_key_sec,
-                oauth_token, oauth_token_sec,
-                verifier=oauth_verifier)
-        elif self.oauthv == 2:
-            raise TypeError('OAuth2 not implemented yet')
+        oauth_session = OAuth1Session(self.oauth_key, self.oauth_key_sec,
+            oauth_token, oauth_token_sec,
+            verifier=oauth_verifier)
 
         oauth_tokens = oauth_session.fetch_access_token(tokenurl_access)
 

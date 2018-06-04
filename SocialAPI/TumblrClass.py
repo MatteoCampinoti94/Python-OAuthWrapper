@@ -8,7 +8,7 @@ class Tumblr(APIBase):
     oauthv = 1
 
     def get_tokens(self, save, quiet, file='tumblr.conf.json'):
-        self.api_tokens(save, quiet, file)
+        self.api_tokens_oauth1(save, quiet, file)
 
     def info(self, blog=''):
         if blog:
