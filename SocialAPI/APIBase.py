@@ -1,6 +1,6 @@
 import json
 import requests
-from requests_oauthlib import OAuth1, OAuth1Session, OAuth2, OAuth2Session
+from requests_oauthlib import OAuth1, OAuth2
 from urllib.parse import urlencode
 
 class APIBase:

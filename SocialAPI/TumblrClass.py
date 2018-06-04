@@ -1,3 +1,4 @@
+from requests_oauthlib import OAuth1Session
 from .APIBase import APIBase
 
 class Tumblr(APIBase):
