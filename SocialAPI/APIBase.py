@@ -4,8 +4,6 @@ from requests_oauthlib import OAuth1, OAuth1Session, OAuth2, OAuth2Session
 from urllib.parse import urlencode
 
 class APIBase:
-    conf_file = ''
-
     def __init__(self, oauth_key='', oauth_key_sec='', oauth_token='', oauth_token_sec='', file='', quiet=True):
         if type(oauth_key) != str or type(oauth_key_sec) != str:
             raise TypeError('Api keys need to be passed as strings')
@@ -33,7 +31,10 @@ class APIBase:
                 self.keys()
                 self.tokens()
 
-    def ConfRead(self, file=conf_file, quiet=True):
+    def ConfRead(self, file='', quiet=True):
+        if not file:
+            file = self.conf_file
+
         with open(file, 'r') as conf:
             conf = json.load(conf)
 
@@ -59,7 +60,10 @@ class APIBase:
                 self.keys()
                 self.tokens()
 
-    def ConfSave(self, file=conf_file):
+    def ConfSave(self, file=''):
+        if not file:
+            file = self.conf_file
+
         oauth = {
             "oauth_key": self.oauth_key,
             "oauth_key_sec": self.oauth_key_sec,
@@ -98,7 +102,7 @@ class APIBase:
         if self.oauthv == 2 and self.oauth2_token:
             self.oauth = OAuth2(token=self.oauth2_token)
 
-    def GetOAuth1Tokens(self, verifier, save, file=conf_file, quiet=True):
+    def GetOAuth1Tokens(self, verifier, save, file='', quiet=True):
         tokenurl_request = self.tokenurl_request
         tokenurl_authorize = self.tokenurl_authorize
         tokenurl_access = self.tokenurl_access

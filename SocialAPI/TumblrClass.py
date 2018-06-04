@@ -13,14 +13,13 @@ def json_parser(response, req_url):
     return response
 
 class Tumblr(APIBase):
-    conf_file = ''
     api_url = 'https://api.tumblr.com/v2/'
     tokenurl_request = 'http://www.tumblr.com/oauth/request_token'
     tokenurl_authorize = 'http://www.tumblr.com/oauth/authorize'
     tokenurl_access = 'http://www.tumblr.com/oauth/access_token'
     oauthv = 1
 
-    def GetTokens(self, save=False, file=conf_file, quiet=True):
+    def GetTokens(self, save=False, file='', quiet=True):
         self.GetOAuth1Tokens('url', save, file, quiet)
 
     def info(self, blog=''):
